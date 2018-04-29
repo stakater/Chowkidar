@@ -19,3 +19,10 @@ We would like to watch for relevant events happening inside kubernetes and then 
 e.g. I would like to get a slack notification when a pod is submitted without requests & limits.
 
 
+## STATUS
+
+IN PROGRESS
+
+## WHY NAME CHOWKIDAR?
+
+To be added!
