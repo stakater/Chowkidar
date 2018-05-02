@@ -1,6 +1,6 @@
 # note: call scripts from /scripts
 
-.PHONY: default build builder-image binary-image test stop clean-images clean
+.PHONY: default build builder-image binary-image test stop clean-images clean push apply deploy
 
 BUILDER = chowkidar-builder
 BINARY = stakater/chowkidar
@@ -41,4 +41,7 @@ clean:
 push: ## push the latest Docker image to DockerHub
 	docker push $(REPOSITORY)
 
-deploy: binary-image push
+apply:
+	kubectl apply -f deployments/manifests/
+
+deploy: binary-image push apply
