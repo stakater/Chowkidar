@@ -16,7 +16,7 @@ metadata:
     group: com.stakater.platform
     version: dev
     provider: stakater
-  name: chowkidar-role
+  name: chowkidar
 rules:
   - apiGroups:
       - ""
@@ -35,11 +35,11 @@ metadata:
     group: com.stakater.platform
     version: dev
     provider: stakater
-  name: chowkidar-role-binding
+  name: chowkidar
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: chowkidar-role
+  name: chowkidar
 subjects:
   - kind: ServiceAccount
     name: chowkidar
