@@ -3,7 +3,10 @@
 .PHONY: default build builder-image binary-image test stop clean-images clean
 
 BUILDER = chowkidar-builder
-BINARY = chowkidar
+BINARY = stakater/chowkidar
+# TODO: we should be able specify the tag in command; so, that we can reuse same Makefile in Jenkins pipeline as well.
+TAG = dev
+REPOSITORY = ${BINARY}:${TAG}
 
 VERSION=
 BUILD=
@@ -21,7 +24,7 @@ builder-image:
 	@docker build -t "${BUILDER}" -f build/package/Dockerfile.build .
 
 binary-image: builder-image
-	@docker run --rm "${BUILDER}" | docker build -t "${BINARY}" -f Dockerfile.run -
+	@docker run --rm "${BUILDER}" | docker build -t "${REPOSITORY}" -f Dockerfile.run -
 
 test:
 	"$(GOCMD)" test -race -v $(shell go list ./... | grep -v '/vendor/')
@@ -34,3 +37,8 @@ clean-images: stop
 
 clean:
 	"$(GOCMD)" clean -i
+
+push: ## push the latest Docker image to DockerHub
+	docker push $(REPOSITORY)
+
+deploy: binary-image push
