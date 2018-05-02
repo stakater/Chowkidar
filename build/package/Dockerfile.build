@@ -8,12 +8,10 @@ RUN apk update && \
 
 ADD . "$GOPATH/src/github.com/stakater/chowkidar"
 
-RUN cd "$GOPATH/src/github.com/stakater/chowkidar" && "ls" && \
+RUN cd "$GOPATH/src/github.com/stakater/chowkidar" && \
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a --installsuffix cgo --ldflags="-s" -o /chowkidar
 
 COPY build/package/Dockerfile.run /
-
-RUN cd "/" && "ls"
 
 # what is this command doing?
 CMD tar -cf - -C / Dockerfile.run chowkidar
