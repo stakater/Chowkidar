@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chowkidar
+data:
+  .chowkidar.yaml: |
+    handler:
+      slack:
+        token: <token>
+        channel: <channel>
+    resource:
+      pod: true
