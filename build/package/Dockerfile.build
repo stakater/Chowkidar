@@ -13,5 +13,6 @@ RUN cd "$GOPATH/src/github.com/stakater/chowkidar" && \
 
 COPY build/package/Dockerfile.run /
 
-# what is this command doing?
+# Running this image produces a tarball suitable to be piped into another
+# Docker build command.
 CMD tar -cf - -C / Dockerfile.run chowkidar
