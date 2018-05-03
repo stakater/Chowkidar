@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	config "github.com/stakater/Chowkidar/pkg/config"
+	"github.com/stakater/Chowkidar/pkg/controller"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -13,7 +15,7 @@ import (
 
 func main() {
 	// create the clientset
-	clientset, err := getClient(true) // GetClient(UseExternal) true = Getting value from .kube/config
+	clientset, err := getClient()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,14 +35,26 @@ func main() {
 	for _, pod := range pods.Items {
 		fmt.Println(pod.Name)
 	}
+
+	config := getControllerConfig()
+	controller := controller.NewController(clientset, config.Controllers[0])
+	// Now let's start the controller
+	stop := make(chan struct{})
+	defer close(stop)
+	go controller.Run(1, stop)
+
+	// Wait forever
+	select {}
 }
-func getClient(useExternal bool) (*kubernetes.Clientset, error) {
+
+func getClient() (*kubernetes.Clientset, error) {
 	var config *rest.Config
 	var err error
 	kubeconfigPath := os.Getenv("KUBECONFIG")
 	if kubeconfigPath == "" {
 		kubeconfigPath = os.Getenv("HOME") + "/.kube/config"
 	}
+	//If file exists so use that
 	if _, err := os.Stat(kubeconfigPath); err == nil {
 		config, err = clientcmd.BuildConfigFromFlags("", kubeconfigPath)
 	} else {
@@ -50,4 +64,13 @@ func getClient(useExternal bool) (*kubernetes.Clientset, error) {
 		return nil, err
 	}
 	return kubernetes.NewForConfig(config)
+}
+func getControllerConfig() config.Config {
+	configFilePath := os.Getenv("CONFIG_FILE_PATH")
+	if len(configFilePath) == 0 {
+		configFilePath = "configs/config.yaml"
+	}
+
+	configuration := config.ReadConfig(configFilePath)
+	return configuration
 }

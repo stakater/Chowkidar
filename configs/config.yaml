@@ -1,0 +1,8 @@
+controllers:
+- type: pods
+  watchcriterion: []
+  actions:
+  - name: slack
+    params:
+      hook: www.google.com
+  operator: and
