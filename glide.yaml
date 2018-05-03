@@ -7,3 +7,8 @@ import:
 - package: k8s.io/client-go
   version: 5.0.0
 - package: gopkg.in/yaml.v2
+# TODO: Change this back to nlopes when that issue is fixed 
+# URL: https://github.com/nlopes/slack/issues/294
+- package: github.com/asiyani/slack
+# - package: github.com/nlopes/slack
+- package: github.com/mitchellh/mapstructure

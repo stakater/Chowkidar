@@ -13,16 +13,21 @@ type Config struct {
 
 type Controller struct {
 	Type           string
-	WatchCriterion []string
+	WatchCriterion Criterion
 	Actions        []Action
-	Operator       string
+}
+
+type Criterion struct {
+	Operator    string
+	Identifiers []string
 }
 
 type Action struct {
 	Name   string
-	Params map[string]string
+	Params map[interface{}]interface{}
 }
 
+//ReadConfig function that reads the yaml file
 func ReadConfig(filePath string) Config {
 	var config Config
 	// Read YML
@@ -39,6 +44,8 @@ func ReadConfig(filePath string) Config {
 
 	return config
 }
+
+//WriteConfig function that can write to the yaml file
 func WriteConfig(config Config, path string) error {
 	b, err := yaml.Marshal(config)
 	if err != nil {

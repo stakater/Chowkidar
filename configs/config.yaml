@@ -1,8 +1,10 @@
 controllers:
 - type: pods
-  watchcriterion: []
+  watchcriterion:
+    operator: and
+    identifiers: ["resourceExists", "healthCheckExists"]
   actions:
   - name: slack
     params:
-      hook: www.google.com
-  operator: and
+      token: xoxb-357207387857-2bTuHVBzg402LiDHWd2NOTaW
+      channel: "guard-room"

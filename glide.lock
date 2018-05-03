@@ -1,6 +1,8 @@
-hash: 3d71705b8f418a099139c6c0916f418f6085eabd1bec1ea6c5151c7beaec15ed
-updated: 2018-05-03T15:05:48.505805962+05:00
+hash: 04af8e93b6f0f955d5de7f0df47c622ffb42ac4af8e02f8a3a60298862f27e13
+updated: 2018-05-03T18:37:24.264053472+05:00
 imports:
+- name: github.com/asiyani/slack
+  version: 150279a4ad4b11910003e30be7ffe7fdb5523634
 - name: github.com/davecgh/go-spew
   version: 782f4967f2dc4564575ca782fe2d04090b5faca8
   subpackages:
@@ -46,6 +48,8 @@ imports:
   - OpenAPIv2
   - compiler
   - extensions
+- name: github.com/gorilla/websocket
+  version: 21ab95fa12b9bdd8fecf5fa3586aad941cc98785
 - name: github.com/gregjones/httpcache
   version: 787624de3eb7bd915c329cba748687a3b22666a6
   subpackages:
@@ -68,6 +72,8 @@ imports:
   - buffer
   - jlexer
   - jwriter
+- name: github.com/mitchellh/mapstructure
+  version: 00c29f56e2386353d58c599509e8dc3801b0d716
 - name: github.com/peterbourgon/diskv
   version: 5f041e8faa004a95c88a202771f4cc3e991971e6
 - name: github.com/PuerkitoBio/purell
@@ -84,13 +90,11 @@ imports:
   version: 1c05540f6879653db88113bc4a2b70aec4bd491f
   subpackages:
   - context
-  - html
-  - html/atom
+  - context/ctxhttp
   - http2
   - http2/hpack
   - idna
   - lex/httplex
-  - websocket
 - name: golang.org/x/sys
   version: 7ddbeae9ae08c6a06a59597f0c9edbc5ff2444ce
   subpackages:

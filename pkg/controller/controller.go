@@ -5,6 +5,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/stakater/Chowkidar/pkg/actions"
+	"github.com/stakater/Chowkidar/pkg/actions/slack"
 	"github.com/stakater/Chowkidar/pkg/config"
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/fields"
@@ -28,14 +30,17 @@ type Event struct {
 	resourceType string
 }
 
+// Controller for checking items
 type Controller struct {
 	clientset        *kubernetes.Clientset
 	indexer          cache.Indexer
 	queue            workqueue.RateLimitingInterface
 	informer         cache.Controller
 	controllerConfig config.Controller
+	Actions          []actions.Action
 }
 
+// Constructor for the Controller to initialize the controller
 func NewController(clientset *kubernetes.Clientset, controllerConfig config.Controller) *Controller {
 
 	controller := &Controller{
@@ -55,9 +60,25 @@ func NewController(clientset *kubernetes.Clientset, controllerConfig config.Cont
 	controller.informer = informer
 	controller.queue = queue
 
+	controller.Actions = populateActions(controllerConfig.Actions, controllerConfig.WatchCriterion)
 	return controller
 
 }
+func populateActions(configActions []config.Action, criterion config.Criterion) []actions.Action {
+	var populatedActions []actions.Action
+	for _, configAction := range configActions {
+		if configAction.Name == "slack" {
+			s := new(slack.Slack)
+			s.Init(configAction.Params, criterion)
+			populatedActions = append(populatedActions, s)
+
+		}
+	}
+
+	return populatedActions
+}
+
+//Add function to add a 'create' event to the queue
 func (c *Controller) Add(obj interface{}) {
 	key, err := cache.MetaNamespaceKeyFunc(obj)
 	var event Event
@@ -68,6 +89,8 @@ func (c *Controller) Add(obj interface{}) {
 		c.queue.Add(event)
 	}
 }
+
+//Update function to add an 'update' event to the queue
 func (c *Controller) Update(old interface{}, new interface{}) {
 	key, err := cache.MetaNamespaceKeyFunc(new)
 	var event Event
@@ -79,6 +102,8 @@ func (c *Controller) Update(old interface{}, new interface{}) {
 		c.queue.Add(event)
 	}
 }
+
+//Delete function to add a 'delete' event to the queue
 func (c *Controller) Delete(obj interface{}) {
 	key, err := cache.MetaNamespaceKeyFunc(obj)
 	var event Event
@@ -90,6 +115,7 @@ func (c *Controller) Delete(obj interface{}) {
 	}
 }
 
+//Run function for controller which handles the queue
 func (c *Controller) Run(threadiness int, stopCh chan struct{}) {
 	defer runtime.HandleCrash()
 
@@ -142,20 +168,23 @@ func (c *Controller) takeAction(event Event) error {
 	}
 
 	// process events based on its type
-	switch event.eventType {
-	case "create":
-		// compare CreationTimestamp and serverStartTime and alert only on latest events
-		// Could be Replaced by using Delta or DeltaFIFO
-		fmt.Printf("%v ", obj.(*v1.Pod).Name)
 
-	case "update":
-		/* TODOs
-		- enahace update event processing in such a way that, it send alerts about what got changed.
-		*/
+	for _, action := range c.Actions {
+		switch event.eventType {
+		case "create":
+			action.ObjectCreated(obj)
+			// fmt.Printf("%v ", obj.(*v1.Pod).Spec.Containers[0].Resources)
 
-	case "delete":
+		case "update":
+			//TODO: Figure how to pass old and new object
+			action.ObjectUpdated(obj, nil)
 
+		case "delete":
+			action.ObjectDeleted(obj)
+
+		}
 	}
+
 	return nil
 }
 
