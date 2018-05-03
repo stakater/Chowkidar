@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: chowkidar
+    group: com.stakater.platform
+    version: dev
+    provider: stakater
+  name: chowkidar
+data:
+  .chowkidar.yaml: |
+    handler:
+      slack:
+        token: <token>
+        channel: <channel>
+    resources:
+      pods: true
