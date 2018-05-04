@@ -109,14 +109,7 @@ func (c *Controller) Update(old interface{}, new interface{}) {
 
 // Delete function to add a 'delete' event to the queue in case of deleting a pod
 func (c *Controller) Delete(obj interface{}) {
-	key, err := cache.MetaNamespaceKeyFunc(obj)
-	var event Event
 
-	if err == nil {
-		event.key = key
-		event.eventType = "delete"
-		c.queue.Add(event)
-	}
 }
 
 //Run function for controller which handles the queue
@@ -174,43 +167,49 @@ func (c *Controller) takeAction(event Event) error {
 	if err != nil {
 		log.Printf("Fetching object with key %s from store failed with %v", event.key, err)
 	}
-	log.Println("Checking for resources block on Pod: `", obj.(*v1.Pod).Name+"`")
+	if obj == nil {
+		//TODO: Currently an error is coming when updating a Pod, check this
+		log.Print("Error in Action")
+	} else {
 
-	//Checking whether the pod has specified resources in yaml for each container
-	var hasResources = true
-	for _, container := range obj.(*v1.Pod).Spec.Containers {
-		hasResources = checkIfContainerHasResources(container)
+		log.Println("Checking for resources block on Pod: `", obj.(*v1.Pod).Name+"`")
 
-		// if any of the containers does not has resources so break
-		if !hasResources {
-			break
+		//Checking whether the pod has specified resources in yaml for each container
+		var hasResources = true
+		for _, container := range obj.(*v1.Pod).Spec.Containers {
+			hasResources = checkIfContainerHasResources(container)
+
+			// if any of the containers does not has resources so break
+			if !hasResources {
+				break
+			}
 		}
-	}
-	if !hasResources {
-		log.Println("Resource block not found, performing actions")
-	}
+		if !hasResources {
+			log.Println("Resource block not found, performing actions")
+		}
 
-	// process events based on its type
-	for index, action := range c.Actions {
-		log.Printf("Performing '%s' action for controller of type '%s'", c.controllerConfig.Actions[index].Name, c.controllerConfig.Type)
-		switch event.eventType {
-		case "create":
-			if !hasResources {
+		// process events based on its type
+		for index, action := range c.Actions {
+			log.Printf("Performing '%s' action for controller of type '%s'", c.controllerConfig.Actions[index].Name, c.controllerConfig.Type)
+			switch event.eventType {
+			case "create":
+				if !hasResources {
 
-				action.ObjectCreated(obj)
+					action.ObjectCreated(obj)
+				}
+
+			case "update":
+				if !hasResources {
+					//TODO: Figure how to pass old and new object
+					action.ObjectUpdated(obj, nil)
+				}
+
+			case "delete":
+				if !hasResources {
+					action.ObjectDeleted(obj)
+				}
+
 			}
-
-		case "update":
-			if !hasResources {
-				//TODO: Figure how to pass old and new object
-				action.ObjectUpdated(obj, nil)
-			}
-
-		case "delete":
-			if !hasResources {
-				action.ObjectDeleted(obj)
-			}
-
 		}
 	}
 

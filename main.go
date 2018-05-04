@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+	log.Println("Starting Chowkidar")
 	// create the clientset
 	clientset, err := getClient()
 	if err != nil {

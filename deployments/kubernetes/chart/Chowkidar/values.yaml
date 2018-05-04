@@ -1,0 +1,29 @@
+# Generated from deployments/kubernetes/templates/chart/values.yaml.tmpl
+
+kubernetes:
+  host: https://kubernetes.default
+
+chowkidar:
+  namespace: default
+  labels:
+    provider: stakater
+    group: com.stakater.platform
+    version: 0.1.0
+  image:
+    name: stakater/chowkidar
+    tag: 0.1.0
+    pullPolicy: IfNotPresent
+  controllers:
+    - type: pods
+      watchcriterion:
+        operator: and
+        identifiers: 
+        - "resourceExists"
+        - "healthCheckExists"
+      actions:
+      - name: slack
+      params: 
+        token: your-token
+        channel: channel-name
+
+  configFilePath: /configs/config.yaml
