@@ -32,7 +32,7 @@ binary-image: builder-image
 	@docker run --rm "${BUILDER}" | docker build -t "${REPOSITORY}" -f Dockerfile.run -
 
 test:
-	"$(GOCMD)" test -race -v $(shell go list ./... | grep -v '/vendor/')
+	"$(GOCMD)" test -race -v ./...
 
 stop:
 	@docker stop "${BINARY}"
