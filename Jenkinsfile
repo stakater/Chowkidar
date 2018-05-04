@@ -36,6 +36,7 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.1') {
                     sh """
                         cd ${srcDir}
                         make install
+                        cp -r ./vendor/* /go/src/
                     """
                 }
 
