@@ -1,0 +1,43 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    configmap.fabric8.io/update-on-change: chowkidar
+  labels:
+    app: chowkidar
+    group: com.stakater.platform
+    version: dev
+    provider: stakater
+  name: chowkidar
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  template:
+    metadata:
+      annotations:
+        configmap.fabric8.io/update-on-change: chowkidar
+      labels:
+        app: chowkidar
+        group: com.stakater.platform
+        version: dev
+        provider: stakater
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_FILE_PATH
+          value: /etc/chowkidar/chowkidar.yaml
+        image: stakater/chowkidar:dev
+        imagePullPolicy: Always
+        name: chowkidar
+        volumeMounts:
+        - mountPath: /etc/chowkidar
+          name: config-volume
+      serviceAccountName: chowkidar
+      volumes:
+      - configMap:
+          name: chowkidar
+        name: config-volume
