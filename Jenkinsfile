@@ -71,6 +71,7 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.1') {
                         print "Generating New Version"
                         def version = common.shOutput("jx-release-version --gh-owner=${repoOwner} --gh-repository=${repoName}")
                         dockerImageVersion = version
+                        //TODO: jx-release-version won't read bumped version from .version
                         sh """
                             echo "${version}" > .version
                         """
