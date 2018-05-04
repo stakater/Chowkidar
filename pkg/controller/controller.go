@@ -30,7 +30,7 @@ type Event struct {
 	resourceType string
 }
 
-// Controller for checking items
+// Controller for checking events with their specific actions
 type Controller struct {
 	clientset        *kubernetes.Clientset
 	indexer          cache.Indexer
@@ -40,7 +40,7 @@ type Controller struct {
 	Actions          []actions.Action
 }
 
-// Constructor for the Controller to initialize the controller
+// NewController for initializing a Controller
 func NewController(clientset *kubernetes.Clientset, controllerConfig config.Controller) *Controller {
 
 	controller := &Controller{
@@ -64,21 +64,25 @@ func NewController(clientset *kubernetes.Clientset, controllerConfig config.Cont
 	return controller
 
 }
+
+// populate the actions for a specific controller
 func populateActions(configActions []config.Action, criterion config.Criterion) []actions.Action {
 	var populatedActions []actions.Action
 	for _, configAction := range configActions {
 		if configAction.Name == "slack" {
 			s := new(slack.Slack)
-			s.Init(configAction.Params, criterion)
+			err := s.Init(configAction.Params, criterion)
+			if err != nil {
+				log.Println(err)
+			}
 			populatedActions = append(populatedActions, s)
 
 		}
 	}
-
 	return populatedActions
 }
 
-//Add function to add a 'create' event to the queue
+// Add function to add a 'create' event to the queue in case of creating a pod
 func (c *Controller) Add(obj interface{}) {
 	key, err := cache.MetaNamespaceKeyFunc(obj)
 	var event Event
@@ -90,7 +94,7 @@ func (c *Controller) Add(obj interface{}) {
 	}
 }
 
-//Update function to add an 'update' event to the queue
+// Update function to add an 'update' event to the queue in case of updating a pod
 func (c *Controller) Update(old interface{}, new interface{}) {
 	key, err := cache.MetaNamespaceKeyFunc(new)
 	var event Event
@@ -103,7 +107,7 @@ func (c *Controller) Update(old interface{}, new interface{}) {
 	}
 }
 
-//Delete function to add a 'delete' event to the queue
+// Delete function to add a 'delete' event to the queue in case of deleting a pod
 func (c *Controller) Delete(obj interface{}) {
 	key, err := cache.MetaNamespaceKeyFunc(obj)
 	var event Event
@@ -117,6 +121,8 @@ func (c *Controller) Delete(obj interface{}) {
 
 //Run function for controller which handles the queue
 func (c *Controller) Run(threadiness int, stopCh chan struct{}) {
+
+	log.Println("Starting Controller for type ", c.controllerConfig.Type)
 	defer runtime.HandleCrash()
 
 	// Let the workers stop when we are done
@@ -135,6 +141,7 @@ func (c *Controller) Run(threadiness int, stopCh chan struct{}) {
 	}
 
 	<-stopCh
+	log.Println("Stopping Controller for type ", c.controllerConfig.Type)
 }
 
 func (c *Controller) runWorker() {
@@ -160,32 +167,78 @@ func (c *Controller) processNextItem() bool {
 	return true
 }
 
+// main business logic that acts bassed on the event or key
 func (c *Controller) takeAction(event Event) error {
 
 	obj, _, err := c.indexer.GetByKey(event.key)
 	if err != nil {
 		log.Printf("Fetching object with key %s from store failed with %v", event.key, err)
 	}
+	log.Println("Checking for resources block on Pod: `", obj.(*v1.Pod).Name+"`")
+
+	//Checking whether the pod has specified resources in yaml for each container
+	var hasResources = true
+	for _, container := range obj.(*v1.Pod).Spec.Containers {
+		hasResources = checkIfContainerHasResources(container)
+
+		// if any of the containers does not has resources so break
+		if !hasResources {
+			break
+		}
+	}
+	if !hasResources {
+		log.Println("Resource block not found, performing actions")
+	}
 
 	// process events based on its type
-
-	for _, action := range c.Actions {
+	for index, action := range c.Actions {
+		log.Printf("Performing '%s' action for controller of type '%s'", c.controllerConfig.Actions[index].Name, c.controllerConfig.Type)
 		switch event.eventType {
 		case "create":
-			action.ObjectCreated(obj)
-			// fmt.Printf("%v ", obj.(*v1.Pod).Spec.Containers[0].Resources)
+			if !hasResources {
+
+				action.ObjectCreated(obj)
+			}
 
 		case "update":
-			//TODO: Figure how to pass old and new object
-			action.ObjectUpdated(obj, nil)
+			if !hasResources {
+				//TODO: Figure how to pass old and new object
+				action.ObjectUpdated(obj, nil)
+			}
 
 		case "delete":
-			action.ObjectDeleted(obj)
+			if !hasResources {
+				action.ObjectDeleted(obj)
+			}
 
 		}
 	}
 
 	return nil
+}
+
+// checks if the container has resources CPU and memory
+func checkIfContainerHasResources(container v1.Container) bool {
+	// get the Resourcelist for limits and requests which is a map
+	limits := container.Resources.Limits
+	requests := container.Resources.Requests
+	_, hasLimitsCPU := limits["cpu"]
+	_, hasLimitsMemory := limits["memory"]
+
+	//if resources.limits does not contain CPU and Memory
+	if !(hasLimitsCPU && hasLimitsMemory) {
+		return false
+	}
+	_, hasRequestCPU := requests["cpu"]
+	_, hasRequestMemory := requests["memory"]
+
+	//if resources.Requests does not contain CPU and Memory
+	if !(hasRequestCPU && hasRequestMemory) {
+		return false
+	}
+	//has Limits and Request
+	return true
+
 }
 
 // handleErr checks if an error happened and makes sure we will retry later.
@@ -211,5 +264,5 @@ func (c *Controller) handleErr(err error, key interface{}) {
 	c.queue.Forget(key)
 	// Report to an external entity that, even after several retries, we could not successfully process this key
 	runtime.HandleError(err)
-	log.Printf("Dropping ingress %q out of the queue: %v", key, err)
+	log.Printf("Dropping the key %q out of the queue: %v", key, err)
 }

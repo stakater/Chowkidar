@@ -17,25 +17,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// nodes, err := clientset.Core().Nodes().List(meta_v1.ListOptions{})
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println("Nodes:  ")
-	// for _, node := range nodes.Items {
-	// 	fmt.Println(node.Name)
-	// }
-	// pods, err := clientset.Core().Pods("").List(meta_v1.ListOptions{})
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println("Pods:  ")
-	// for _, pod := range pods.Items {
-	// 	fmt.Println(pod.Name)
-	// }
 
+	// get the Controller config file
 	config := getControllerConfig()
+
+	//TODO: create multiple controllers from config array, currently hardcoded 0
+	// creating the controller
 	controller := controller.NewController(clientset, config.Controllers[0])
+
 	// Now let's start the controller
 	stop := make(chan struct{})
 	defer close(stop)
@@ -45,6 +34,7 @@ func main() {
 	select {}
 }
 
+// gets the client for k8s, if ~/.kube/config exists so get that config else incluster config
 func getClient() (*kubernetes.Clientset, error) {
 	var config *rest.Config
 	var err error
@@ -52,10 +42,10 @@ func getClient() (*kubernetes.Clientset, error) {
 	if kubeconfigPath == "" {
 		kubeconfigPath = os.Getenv("HOME") + "/.kube/config"
 	}
-	//If file exists so use that
+	//If file exists so use that config settings
 	if _, err := os.Stat(kubeconfigPath); err == nil {
 		config, err = clientcmd.BuildConfigFromFlags("", kubeconfigPath)
-	} else {
+	} else { //Use Incluster Configuration
 		config, err = rest.InClusterConfig()
 	}
 	if err != nil {
@@ -63,12 +53,14 @@ func getClient() (*kubernetes.Clientset, error) {
 	}
 	return kubernetes.NewForConfig(config)
 }
+
+// get the yaml configuration for the controller
 func getControllerConfig() config.Config {
 	configFilePath := os.Getenv("CONFIG_FILE_PATH")
 	if len(configFilePath) == 0 {
+		//Default config file is placed in configs/ folder
 		configFilePath = "configs/config.yaml"
 	}
-
 	configuration := config.ReadConfig(configFilePath)
 	return configuration
 }
