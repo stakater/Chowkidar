@@ -3,19 +3,24 @@
 .PHONY: default build builder-image binary-image test stop clean-images clean push apply deploy
 
 BUILDER = chowkidar-builder
-BINARY = stakater/chowkidar
-# TODO: we should be able specify the tag in command; so, that we can reuse same Makefile in Jenkins pipeline as well.
-TAG = dev
-REPOSITORY = ${BINARY}:${TAG}
+BINARY = Chowkidar
+DOCKER_IMAGE ?= stakater/chowkidar
+# Default value "dev"
+DOCKER_TAG ?= dev
+REPOSITORY = ${DOCKER_IMAGE}:${DOCKER_TAG}
 
-VERSION=
+VERSION=$(shell cat .version)
 BUILD=
 
 GOCMD = go
+GLIDECMD = glide
 GOFLAGS ?= $(GOFLAGS:)
 LDFLAGS =
 
 default: build test
+
+install: 
+	"$(GLIDECMD)" install
 
 build:
 	"$(GOCMD)" build ${GOFLAGS} ${LDFLAGS} -o "${BINARY}"
