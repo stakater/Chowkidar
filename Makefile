@@ -20,7 +20,7 @@ LDFLAGS =
 default: build test
 
 install: 
-	"$(GLIDECMD)" install
+	"$(GLIDECMD)" update
 	cp -r vendor/* ${GOPATH}/src/ 
 
 build:
