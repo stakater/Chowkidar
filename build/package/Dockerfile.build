@@ -1,8 +1,8 @@
 FROM golang:alpine
 MAINTAINER "Stakater Team"
 
-RUN apk update && \
-    apk add git build-base && \
+RUN apk -v --update \
+    add git build-base && \
     rm -rf /var/cache/apk/* && \
     mkdir -p "$GOPATH/src/github.com/stakater/Chowkidar"
 
