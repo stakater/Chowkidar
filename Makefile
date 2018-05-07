@@ -21,6 +21,7 @@ default: build test
 
 install: 
 	"$(GLIDECMD)" install
+	cp -r vendor/* ${GOPATH}/src/ 
 
 build:
 	"$(GOCMD)" build ${GOFLAGS} ${LDFLAGS} -o "${BINARY}"

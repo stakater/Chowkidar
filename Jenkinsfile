@@ -1,5 +1,5 @@
 #!/usr/bin/groovy
-@Library('github.com/stakater/fabric8-pipeline-library@update-wz')
+@Library('github.com/stakater/fabric8-pipeline-library@master')
 
 def utils = new io.fabric8.Utils()
 
@@ -36,7 +36,7 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.1') {
                     sh """
                         cd ${srcDir}
                         make install
-                    """
+                    """ 
                 }
 
                 stage('Run Tests') {
