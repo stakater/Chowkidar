@@ -1,5 +1,5 @@
 #!/usr/bin/groovy
-@Library('github.com/stakater/fabric8-pipeline-library@master')
+@Library('github.com/stakater/fabric8-pipeline-library@update-wz')
 
 def utils = new io.fabric8.Utils()
 
