@@ -34,6 +34,7 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.1') {
             try {
                 stage('Download Dependencies') {
                     sh """
+                        sleep 2h
                         cd ${srcDir}
                         make install
                     """ 
