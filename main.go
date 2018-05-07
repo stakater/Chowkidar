@@ -67,6 +67,9 @@ func getControllerConfig() config.Config {
 		//Default config file is placed in configs/ folder
 		configFilePath = "configs/config.yaml"
 	}
-	configuration := config.ReadConfig(configFilePath)
+	configuration, err := config.ReadConfig(configFilePath)
+	if err != nil {
+		log.Panic(err)
+	}
 	return configuration
 }

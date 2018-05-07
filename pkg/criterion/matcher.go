@@ -37,6 +37,5 @@ func arePodsResourceMissing(pod *v1.Pod) bool {
 	}
 
 	// has Limits and Request
-	log.Println("Resource block not found, performing actions")
 	return false
 }

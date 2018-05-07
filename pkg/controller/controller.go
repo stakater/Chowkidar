@@ -157,6 +157,7 @@ func (c *Controller) takeAction(event Event) error {
 		//TODO: Currently an error is coming when updating a Pod, check this
 		log.Print("Error in Action")
 	} else {
+		log.Println("Resource block not found, performing actions")
 		// process events based on its type
 		for index, action := range c.Actions {
 			log.Printf("Performing '%s' action for controller of type '%s'", c.controllerConfig.Actions[index].Name, c.controllerConfig.Type)

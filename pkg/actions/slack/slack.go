@@ -1,7 +1,7 @@
 package slack
 
 import (
-	"fmt"
+	"errors"
 	"log"
 
 	"github.com/asiyani/slack"
@@ -18,14 +18,14 @@ type Slack struct {
 }
 
 // Init initializes the Slack Configuration like token and channel
-func (s *Slack) Init(params map[interface{}]interface{}, criteron config.Criterion) error {
-	s.Criterion = criteron
+func (s *Slack) Init(params map[interface{}]interface{}, criterion config.Criterion) error {
+	s.Criterion = criterion
 	err := mapstructure.Decode(params, &s) //Converts the params to slack struct fields
 	if err != nil {
-		panic(err)
+		return err
 	}
 	if s.Token == "" || s.Channel == "" {
-		return fmt.Errorf("Missing slack token or channel")
+		return errors.New("Missing slack token or channel")
 	}
 	return nil
 }
