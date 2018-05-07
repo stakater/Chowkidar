@@ -1,6 +1,8 @@
 FROM golang:alpine
 MAINTAINER "Stakater Team"
 
+RUN apk update
+
 RUN apk -v --update \
     add git build-base && \
     rm -rf /var/cache/apk/* && \
