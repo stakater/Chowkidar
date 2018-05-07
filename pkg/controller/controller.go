@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/stakater/Chowkidar/pkg/actions"
-	"github.com/stakater/Chowkidar/pkg/actions/slack"
 	"github.com/stakater/Chowkidar/pkg/config"
-	"k8s.io/api/core/v1"
+	"github.com/stakater/Chowkidar/pkg/criterion"
+	"github.com/stakater/Chowkidar/pkg/kube"
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -41,45 +41,32 @@ type Controller struct {
 }
 
 // NewController for initializing a Controller
-func NewController(clientset *kubernetes.Clientset, controllerConfig config.Controller) *Controller {
+func NewController(clientset *kubernetes.Clientset, controllerConfig config.Controller) (*Controller, error) {
+
+	if _, ok := kube.ResourceMap[controllerConfig.Type]; !ok {
+		return nil, fmt.Errorf("Invalid Resource Type: %s", controllerConfig.Type)
+	}
 
 	controller := &Controller{
 		clientset:        clientset,
 		controllerConfig: controllerConfig,
 	}
 	queue := workqueue.NewRateLimitingQueue(workqueue.DefaultControllerRateLimiter())
-	listWatcher := cache.NewListWatchFromClient(clientset.CoreV1().RESTClient(), "pods", AllNamespaces, fields.Everything())
+	listWatcher := cache.NewListWatchFromClient(clientset.CoreV1().RESTClient(), controllerConfig.Type, AllNamespaces, fields.Everything())
 
-	indexer, informer := cache.NewIndexerInformer(listWatcher, &v1.Pod{}, 0, cache.ResourceEventHandlerFuncs{
-		AddFunc:    controller.Add,
-		UpdateFunc: controller.Update,
-		DeleteFunc: controller.Delete,
+	indexer, informer := cache.NewIndexerInformer(listWatcher, kube.MapToRuntimeObject(controllerConfig.Type), 0, cache.ResourceEventHandlerFuncs{
+		AddFunc:    criterion.MatchFuncSingle(controller.Add, controllerConfig.WatchCriterion),
+		UpdateFunc: criterion.MatchFuncMulti(controller.Update, controllerConfig.WatchCriterion),
+		DeleteFunc: criterion.MatchFuncSingle(controller.Delete, controllerConfig.WatchCriterion),
 	}, cache.Indexers{})
 
 	controller.indexer = indexer
 	controller.informer = informer
 	controller.queue = queue
 
-	controller.Actions = populateActions(controllerConfig.Actions, controllerConfig.WatchCriterion)
-	return controller
+	controller.Actions = actions.PopulateFromConfig(controllerConfig.Actions, controllerConfig.WatchCriterion)
+	return controller, nil
 
-}
-
-// populate the actions for a specific controller
-func populateActions(configActions []config.Action, criterion config.Criterion) []actions.Action {
-	var populatedActions []actions.Action
-	for _, configAction := range configActions {
-		if configAction.Name == "slack" {
-			s := new(slack.Slack)
-			err := s.Init(configAction.Params, criterion)
-			if err != nil {
-				log.Println(err)
-			}
-			populatedActions = append(populatedActions, s)
-
-		}
-	}
-	return populatedActions
 }
 
 // Add function to add a 'create' event to the queue in case of creating a pod
@@ -101,7 +88,6 @@ func (c *Controller) Update(old interface{}, new interface{}) {
 
 	if err == nil {
 		event.key = key
-		var event Event
 		event.eventType = "update"
 		c.queue.Add(event)
 	}
@@ -171,73 +157,21 @@ func (c *Controller) takeAction(event Event) error {
 		//TODO: Currently an error is coming when updating a Pod, check this
 		log.Print("Error in Action")
 	} else {
-
-		log.Println("Checking for resources block on Pod: `", obj.(*v1.Pod).Name+"`")
-
-		//Checking whether the pod has specified resources in yaml for each container
-		var hasResources = true
-		for _, container := range obj.(*v1.Pod).Spec.Containers {
-			hasResources = checkIfContainerHasResources(container)
-
-			// if any of the containers does not has resources so break
-			if !hasResources {
-				break
-			}
-		}
-		if !hasResources {
-			log.Println("Resource block not found, performing actions")
-		}
-
 		// process events based on its type
 		for index, action := range c.Actions {
 			log.Printf("Performing '%s' action for controller of type '%s'", c.controllerConfig.Actions[index].Name, c.controllerConfig.Type)
 			switch event.eventType {
 			case "create":
-				if !hasResources {
-
-					action.ObjectCreated(obj)
-				}
-
+				action.ObjectCreated(obj)
 			case "update":
-				if !hasResources {
-					//TODO: Figure how to pass old and new object
-					action.ObjectUpdated(obj, nil)
-				}
-
+				//TODO: Figure how to pass old and new object
+				action.ObjectUpdated(obj, nil)
 			case "delete":
-				if !hasResources {
-					action.ObjectDeleted(obj)
-				}
-
+				action.ObjectDeleted(obj)
 			}
 		}
 	}
-
 	return nil
-}
-
-// checks if the container has resources CPU and memory
-func checkIfContainerHasResources(container v1.Container) bool {
-	// get the Resourcelist for limits and requests which is a map
-	limits := container.Resources.Limits
-	requests := container.Resources.Requests
-	_, hasLimitsCPU := limits["cpu"]
-	_, hasLimitsMemory := limits["memory"]
-
-	//if resources.limits does not contain CPU and Memory
-	if !(hasLimitsCPU && hasLimitsMemory) {
-		return false
-	}
-	_, hasRequestCPU := requests["cpu"]
-	_, hasRequestMemory := requests["memory"]
-
-	//if resources.Requests does not contain CPU and Memory
-	if !(hasRequestCPU && hasRequestMemory) {
-		return false
-	}
-	//has Limits and Request
-	return true
-
 }
 
 // handleErr checks if an error happened and makes sure we will retry later.

@@ -24,12 +24,17 @@ func main() {
 
 	//TODO: create multiple controllers from config array, currently hardcoded 0
 	// creating the controller
-	controller := controller.NewController(clientset, config.Controllers[0])
-
-	// Now let's start the controller
-	stop := make(chan struct{})
-	defer close(stop)
-	go controller.Run(1, stop)
+	for _, c := range config.Controllers {
+		controller, err := controller.NewController(clientset, c)
+		if err != nil {
+			log.Printf("Error occured while creating controller. Reason: %s", err.Error())
+			continue
+		}
+		// Now let's start the controller
+		stop := make(chan struct{})
+		defer close(stop)
+		go controller.Run(1, stop)
+	}
 
 	// Wait forever
 	select {}

@@ -1,5 +1,5 @@
 hash: 04af8e93b6f0f955d5de7f0df47c622ffb42ac4af8e02f8a3a60298862f27e13
-updated: 2018-05-03T18:37:24.264053472+05:00
+updated: 2018-05-04T21:57:22.970885683+05:00
 imports:
 - name: github.com/asiyani/slack
   version: 150279a4ad4b11910003e30be7ffe7fdb5523634
@@ -117,7 +117,7 @@ imports:
 - name: gopkg.in/inf.v0
   version: 3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4
 - name: gopkg.in/yaml.v2
-  version: 53feefa2559fb8dfa8d81baad31be332c97d6c77
+  version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 - name: k8s.io/api
   version: fe29995db37613b9c5b2a647544cf627bfa8d299
   subpackages:
