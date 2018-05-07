@@ -22,7 +22,6 @@ func main() {
 	// get the Controller config file
 	config := getControllerConfig()
 
-	//TODO: create multiple controllers from config array, currently hardcoded 0
 	// creating the controller
 	for _, c := range config.Controllers {
 		controller, err := controller.NewController(clientset, c)
