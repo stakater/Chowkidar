@@ -1,4 +1,4 @@
-package: github.com/stakater/Chowkidar
+package: .
 import:
 - package: k8s.io/api
   version: kubernetes-1.8.0
