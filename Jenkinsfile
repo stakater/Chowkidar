@@ -49,7 +49,7 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.1') {
                 stage('Build Binary') {
                     sh """
                         cd ${srcDir}
-                        go build -o ./build/docker/${repoName.toLowerCase()}
+                        go build -o ./build/package/${repoName.toLowerCase()}
                     """
                 }
 
