@@ -15,13 +15,13 @@ import (
 )
 
 var (
-	clientSet, _ = kube.GetClient()
+	clientSet, _     = kube.GetClient()
+	configFilePath   = "../../configs/testConfigs/CorrectConfig.yaml"
+	configuration, _ = config.ReadConfig(configFilePath)
 )
 
 func TestControllerWithWrongTypeShouldNotCreate(t *testing.T) {
-	configFilePath := "../../configs/testConfigs/WrongTypeConfig.yaml"
-	configuration, err := config.ReadConfig(configFilePath)
-	_, err = NewController(clientSet, configuration.Controllers[0])
+	_, err := NewController(clientSet, configuration.Controllers[0])
 	if err != nil {
 		log.Printf("Unable to create NewController error = %v", err)
 		return
@@ -30,9 +30,6 @@ func TestControllerWithWrongTypeShouldNotCreate(t *testing.T) {
 
 // Creating a Controller for Pod with Default Action without Resources so messages printed
 func TestControllerForPodWithoutResourcesDefaultAction(t *testing.T) {
-
-	configFilePath := "../../configs/testConfigs/CorrectConfig.yaml"
-	configuration, err := config.ReadConfig(configFilePath)
 	controller, err := NewController(clientSet, configuration.Controllers[0])
 	if err != nil {
 		log.Printf("Unable to create NewController error = %v", err)
@@ -41,7 +38,7 @@ func TestControllerForPodWithoutResourcesDefaultAction(t *testing.T) {
 	stop := make(chan struct{})
 	defer close(stop)
 	go controller.Run(1, stop)
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	namespace := "test"
 	podName := "testpod-withoutresources-chowkidar"
 	pod := podWithoutResources(namespace, podName)
@@ -59,9 +56,6 @@ func TestControllerForPodWithoutResourcesDefaultAction(t *testing.T) {
 
 // Creating a Controller for Pod with Default Action with Resources so no message printed
 func TestControllerForPodWithResourcesDefaultAction(t *testing.T) {
-
-	configFilePath := "../../configs/testConfigs/CorrectConfig.yaml"
-	configuration, err := config.ReadConfig(configFilePath)
 	controller, err := NewController(clientSet, configuration.Controllers[0])
 	if err != nil {
 		log.Printf("Unable to create NewController error = %v", err)
@@ -70,7 +64,7 @@ func TestControllerForPodWithResourcesDefaultAction(t *testing.T) {
 	stop := make(chan struct{})
 	defer close(stop)
 	go controller.Run(1, stop)
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	namespace := "test"
 	podName := "testpod-withresources-chowkidar"
 	pod := podWithResources(namespace, podName)
@@ -79,7 +73,6 @@ func TestControllerForPodWithResourcesDefaultAction(t *testing.T) {
 		panic(err)
 	}
 	log.Printf("Created Pod %q.\n", result.GetObjectMeta().GetName())
-
 	time.Sleep(10 * time.Second)
 
 	log.Printf("Deleting Pod %q.\n", result.GetObjectMeta().GetName())
@@ -89,12 +82,8 @@ func TestControllerForPodWithResourcesDefaultAction(t *testing.T) {
 }
 
 // Creating a Controller for Updating Pod with Default Action without Resources so messages printed
-func TestControllerForUpdatePodShouldUpdateAndSendMessage(t *testing.T) {
-
-	configFilePath := "../../configs/testConfigs/CorrectConfig.yaml"
-	configuration, err := config.ReadConfig(configFilePath)
+func TestControllerForUpdatePodShouldUpdateDefaultAction(t *testing.T) {
 	controller, err := NewController(clientSet, configuration.Controllers[0])
-
 	if err != nil {
 		log.Printf("Unable to create NewController error = %v", err)
 		return
@@ -102,7 +91,7 @@ func TestControllerForUpdatePodShouldUpdateAndSendMessage(t *testing.T) {
 	stop := make(chan struct{})
 	defer close(stop)
 	go controller.Run(1, stop)
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	namespace := "test"
 	podName := "testpod-withoutresources-chowkidar"
 	podClient := clientSet.CoreV1().Pods(namespace)

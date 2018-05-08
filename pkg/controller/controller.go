@@ -95,7 +95,7 @@ func (c *Controller) Update(old interface{}, new interface{}) {
 
 // Delete function to add a 'delete' event to the queue in case of deleting a pod
 func (c *Controller) Delete(obj interface{}) {
-
+	//In current scenario, we dont need to do anything when a pod is deleted so it is empty now
 }
 
 //Run function for controller which handles the queue
@@ -154,7 +154,6 @@ func (c *Controller) takeAction(event Event) error {
 		log.Printf("Fetching object with key %s from store failed with %v", event.key, err)
 	}
 	if obj == nil {
-		//TODO: Currently an error is coming when updating a Pod, check this
 		log.Print("Error in Action")
 	} else {
 		log.Println("Resource block not found, performing actions")

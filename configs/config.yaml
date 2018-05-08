@@ -8,5 +8,5 @@ controllers:
   actions:
   - name: slack
     params:
-      token: xoxb-357207387857-awHyvILCPRlJJhAeYlmnbfAY
-      channel: "guard-room"
+      token: <token>
+      channel: <channel-name>

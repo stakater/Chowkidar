@@ -37,18 +37,25 @@ func (s *Slack) Init(params map[interface{}]interface{}, criterion config.Criter
 // ObjectCreated sending SlackNotification when an object is created
 func (s *Slack) ObjectCreated(obj interface{}) {
 	message := "Resource block not found for Pod: `" + obj.(*v1.Pod).Name + "` in Namespace: `" + obj.(*v1.Pod).Namespace + "`"
-	s.SendNotification(message)
+	err := s.SendNotification(message)
+	if err != nil {
+		log.Println("Error:  ", err)
+	}
 }
 
 // ObjectDeleted sending SlackNotification when an object is deleted
 func (s *Slack) ObjectDeleted(obj interface{}) {
+	//In current scenario, we dont need to do anything when a pod is deleted so it is empty now
 
 }
 
 // ObjectUpdated sending SlackNotification when an object is updated
 func (s *Slack) ObjectUpdated(oldObj, newObj interface{}) {
 	message := "Resource block not found for Pod: `" + oldObj.(*v1.Pod).Name + "` in Namespace: `" + oldObj.(*v1.Pod).Namespace + "`"
-	s.SendNotification(message)
+	err := s.SendNotification(message)
+	if err != nil {
+		log.Println("Error:  ", err)
+	}
 }
 
 // sends the Notification based on the event
