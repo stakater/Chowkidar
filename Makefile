@@ -28,7 +28,7 @@ build:
 	"$(GOCMD)" build ${GOFLAGS} ${LDFLAGS} -o "${BINARY}"
 
 builder-image:
-	@docker build --network=host -t "${BUILDER}" -f build/package/Dockerfile.build .
+	@docker build -t "${BUILDER}" -f build/package/Dockerfile.build .
 
 binary-image: builder-image
 	@docker run --rm "${BUILDER}" | docker build -t "${REPOSITORY}" -f Dockerfile.run -
