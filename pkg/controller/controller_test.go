@@ -2,21 +2,18 @@ package controller
 
 import (
 	"log"
-	"os"
 	"testing"
 	"time"
 
 	"github.com/stakater/Chowkidar/pkg/config"
+	"github.com/stakater/Chowkidar/pkg/kube"
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
 )
 
 var (
-	clientSet = getTestClient()
+	clientSet, _ = kube.GetClient()
 )
 
 func TestControllerWithWrongTypeShouldNotCreate(t *testing.T) {
@@ -169,14 +166,4 @@ func podWithoutResources(namespace string, podName string) *v1.Pod {
 			},
 		},
 	}
-}
-func getTestClient() *kubernetes.Clientset {
-	var config *rest.Config
-	kubeconfigPath := os.Getenv("HOME") + "/.kube/config"
-	if _, err := os.Stat(kubeconfigPath); err == nil {
-		config, err = clientcmd.BuildConfigFromFlags("", kubeconfigPath)
-	}
-	client, _ := kubernetes.NewForConfig(config)
-	return client
-
 }

@@ -6,15 +6,13 @@ import (
 
 	config "github.com/stakater/Chowkidar/pkg/config"
 	"github.com/stakater/Chowkidar/pkg/controller"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
+	"github.com/stakater/Chowkidar/pkg/kube"
 )
 
 func main() {
 	log.Println("Starting Chowkidar")
 	// create the clientset
-	clientset, err := getClient()
+	clientset, err := kube.GetClient()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -37,26 +35,6 @@ func main() {
 
 	// Wait forever
 	select {}
-}
-
-// gets the client for k8s, if ~/.kube/config exists so get that config else incluster config
-func getClient() (*kubernetes.Clientset, error) {
-	var config *rest.Config
-	var err error
-	kubeconfigPath := os.Getenv("KUBECONFIG")
-	if kubeconfigPath == "" {
-		kubeconfigPath = os.Getenv("HOME") + "/.kube/config"
-	}
-	//If file exists so use that config settings
-	if _, err := os.Stat(kubeconfigPath); err == nil {
-		config, err = clientcmd.BuildConfigFromFlags("", kubeconfigPath)
-	} else { //Use Incluster Configuration
-		config, err = rest.InClusterConfig()
-	}
-	if err != nil {
-		return nil, err
-	}
-	return kubernetes.NewForConfig(config)
 }
 
 // get the yaml configuration for the controller
