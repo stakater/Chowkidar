@@ -46,17 +46,18 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.1') {
                     """
                 }
 
+                stage('Build Binary') {
+                    sh """
+                        cd ${srcDir}
+                        go build -o ./build/docker/${repoName.toLowerCase()}
+                    """
+                }
+
                 if (utils.isCI()) {
                     stage('CI: Publish Dev Image') {
                         dockerImageVersion = stakaterCommands.getBranchedVersion("${env.BUILD_NUMBER}")
-                        
-                        sh """
-                            cd ${srcDir}
-                            export DOCKER_IMAGE=${dockerImage}
-                            export DOCKER_TAG=${dockerImageVersion}
-                            make binary-image
-                            make push
-                        """
+                        docker.buildImageWithTag(dockerContextDir, dockerImage, dockerImageVersion)
+                        docker.pushTag(dockerImage, dockerImageVersion)
                     }
                     
                     stage('Notify') {
