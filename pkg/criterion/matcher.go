@@ -9,8 +9,13 @@ import (
 
 //TODO: Create a criterion matcher and refactor this
 func matchesCriterion(obj interface{}, criterion config.Criterion) bool {
-	log.Println("Checking for resources block on Pod: `", obj.(*v1.Pod).Name+"`")
-	return arePodsResourceMissing(obj.(*v1.Pod))
+	for _, identifier := range criterion.Identifiers {
+		if identifier == "resourceExists" {
+			log.Println("Checking for resources block on Pod: `", obj.(*v1.Pod).Name+"`")
+			return arePodsResourceMissing(obj.(*v1.Pod))
+		}
+	}
+	return false
 }
 
 // checks if the pod containers has resources CPU and memory

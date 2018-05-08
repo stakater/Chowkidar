@@ -39,11 +39,18 @@ First of all you need to modify `configs/config.yaml` file. Following are the av
 | actions               | The Array of actions that you want to take, e.g. send message to Slack, etc   |
 
 ### Supported Types
-Currently we are supporting, 
+Currently we are supporting,
 - Pods
 
 
 We will be adding support for other Types as well in the future
+
+### Supported Criterion
+Currently we are supporting following Criterion
+- resourceExists: It will make sure Pods should have Resources and if not found, it will take action
+
+
+We will be adding support for other Criterion as well in the future
 
 ### Supported Actions
 Currently we are supporting following Actions with their Parameters,
