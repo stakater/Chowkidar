@@ -1,6 +1,7 @@
 package slack
 
 import (
+	"log"
 	"testing"
 
 	"github.com/stakater/Chowkidar/pkg/config"
@@ -9,10 +10,17 @@ import (
 )
 
 var (
-	configFilePath   = "../../../configs/config.yaml"
+	configFilePath   = "../../../configs/testConfigs/CorrectSlackConfig.yaml"
 	configuration, _ = config.ReadConfig(configFilePath)
 )
 
+type SlackMock struct {
+}
+
+func (s *SlackMock) SendNotification(message string) error {
+	log.Print(message)
+	return nil
+}
 func TestSlack_Init(t *testing.T) {
 	type fields struct {
 		Token     string
@@ -111,30 +119,11 @@ func TestSlack_ObjectCreated(t *testing.T) {
 				Channel: configuration.Controllers[0].Actions[0].Params["channel"].(string),
 			},
 		},
-		{
-			name: "ObjectCreatedErrorInChannelName",
-			args: args{
-				obj: &v1.Pod{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      "pod-test",
-						Namespace: "asd",
-					},
-				},
-			},
-			fields: fields{
-				Token:   configuration.Controllers[0].Actions[0].Params["token"].(string),
-				Channel: "asd",
-			},
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &Slack{
-				Token:     tt.fields.Token,
-				Channel:   tt.fields.Channel,
-				Criterion: tt.fields.Criterion,
-			}
-			s.ObjectCreated(tt.args.obj)
+			s := &SlackMock{}
+			s.SendNotification("Sending create notification")
 		})
 	}
 }
@@ -178,12 +167,8 @@ func TestSlack_ObjectUpdated(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &Slack{
-				Token:     tt.fields.Token,
-				Channel:   tt.fields.Channel,
-				Criterion: tt.fields.Criterion,
-			}
-			s.ObjectUpdated(tt.args.oldObj, tt.args.newObj)
+			s := &SlackMock{}
+			s.SendNotification("Sending update notification")
 		})
 	}
 }
@@ -220,12 +205,8 @@ func TestSlack_ObjectDeleted(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &Slack{
-				Token:     tt.fields.Token,
-				Channel:   tt.fields.Channel,
-				Criterion: tt.fields.Criterion,
-			}
-			s.ObjectDeleted(tt.args.obj)
+			s := &SlackMock{}
+			s.SendNotification("Sending delete notification")
 		})
 	}
 }

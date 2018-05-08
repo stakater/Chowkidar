@@ -10,6 +10,10 @@ import (
 	"k8s.io/api/core/v1"
 )
 
+type SlackService interface {
+	SendNotification(message string) error
+}
+
 // Slack action class implementing the Action interface
 type Slack struct {
 	Token     string
@@ -33,7 +37,7 @@ func (s *Slack) Init(params map[interface{}]interface{}, criterion config.Criter
 // ObjectCreated sending SlackNotification when an object is created
 func (s *Slack) ObjectCreated(obj interface{}) {
 	message := "Resource block not found for Pod: `" + obj.(*v1.Pod).Name + "` in Namespace: `" + obj.(*v1.Pod).Namespace + "`"
-	sendSlackNotification(s, message)
+	s.SendNotification(message)
 }
 
 // ObjectDeleted sending SlackNotification when an object is deleted
@@ -43,12 +47,12 @@ func (s *Slack) ObjectDeleted(obj interface{}) {
 
 // ObjectUpdated sending SlackNotification when an object is updated
 func (s *Slack) ObjectUpdated(oldObj, newObj interface{}) {
-	message := "Resource block not found for Pod: `" + oldObj.(*v1.Pod).Name + "`"
-	sendSlackNotification(s, message)
+	message := "Resource block not found for Pod: `" + oldObj.(*v1.Pod).Name + "` in Namespace: `" + oldObj.(*v1.Pod).Namespace + "`"
+	s.SendNotification(message)
 }
 
 // sends the Notification based on the event
-func sendSlackNotification(s *Slack, message string) {
+func (s *Slack) SendNotification(message string) error {
 	api := slack.New(s.Token)
 	params := slack.PostMessageParameters{}
 	params.Attachments = []slack.Attachment{prepareMessage(s, message)}
@@ -56,11 +60,11 @@ func sendSlackNotification(s *Slack, message string) {
 
 	_, _, err := api.PostMessage(s.Channel, "Chowkidar Alert", params)
 	if err != nil {
-		log.Printf("%s\n", err)
-		return
+		return err
 	}
 
 	log.Printf("Message successfully sent to Slack Channel `%s`", s.Channel)
+	return nil
 }
 
 // Prepares the attachments to send in POST request

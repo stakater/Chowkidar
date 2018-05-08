@@ -1,8 +1,11 @@
 package actions
 
 import (
+	"log"
+
 	"github.com/stakater/Chowkidar/pkg/actions/slack"
 	"github.com/stakater/Chowkidar/pkg/config"
+	"k8s.io/api/core/v1"
 )
 
 func assertActionImplementations() {
@@ -48,7 +51,8 @@ func (d *Default) Init(params map[interface{}]interface{}, criterion config.Crit
 
 // ObjectCreated Do nothing for default handler
 func (d *Default) ObjectCreated(obj interface{}) {
-
+	message := "Resource block not found for Pod: `" + obj.(*v1.Pod).Name + "` in Namespace: `" + obj.(*v1.Pod).Namespace + "`"
+	log.Printf(message)
 }
 
 // ObjectDeleted Do nothing for default handler
@@ -58,5 +62,6 @@ func (d *Default) ObjectDeleted(obj interface{}) {
 
 // ObjectUpdated Do nothing for default handler
 func (d *Default) ObjectUpdated(oldObj, newObj interface{}) {
-
+	message := "Resource block not found for Pod: `" + oldObj.(*v1.Pod).Name + "` in Namespace: `" + oldObj.(*v1.Pod).Namespace + "`"
+	log.Printf(message)
 }

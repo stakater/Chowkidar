@@ -12,7 +12,7 @@ import (
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/client-go/kubernetes"
+	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/util/workqueue"
 )
@@ -32,7 +32,7 @@ type Event struct {
 
 // Controller for checking events with their specific actions
 type Controller struct {
-	clientset        *kubernetes.Clientset
+	clientset        clientset.Interface
 	indexer          cache.Indexer
 	queue            workqueue.RateLimitingInterface
 	informer         cache.Controller
@@ -41,7 +41,7 @@ type Controller struct {
 }
 
 // NewController for initializing a Controller
-func NewController(clientset *kubernetes.Clientset, controllerConfig config.Controller) (*Controller, error) {
+func NewController(clientset clientset.Interface, controllerConfig config.Controller) (*Controller, error) {
 
 	if _, ok := kube.ResourceMap[controllerConfig.Type]; !ok {
 		return nil, fmt.Errorf("Invalid Resource Type: %s", controllerConfig.Type)

@@ -17,7 +17,7 @@ func TestReadConfig(t *testing.T) {
 	}{
 		{
 			name: "TestingWithCorrectValues",
-			args: args{filePath: "../../configs/testConfigs/CorrectConfig.yaml"},
+			args: args{filePath: "../../configs/testConfigs/CorrectSlackConfig.yaml"},
 			want: Config{
 				Controllers: []Controller{
 					Controller{
