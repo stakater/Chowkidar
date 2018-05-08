@@ -54,7 +54,7 @@ func TestControllerForPodWithoutResourcesDefaultAction(t *testing.T) {
 	time.Sleep(10 * time.Second)
 	log.Printf("Deleting Pod %q.\n", result.GetObjectMeta().GetName())
 	controller.clientset.CoreV1().Pods(namespace).Delete(podName, &metav1.DeleteOptions{})
-
+	time.Sleep(10 * time.Second)
 }
 
 // Creating a Controller for Pod with Default Action with Resources so no message printed
@@ -84,6 +84,7 @@ func TestControllerForPodWithResourcesDefaultAction(t *testing.T) {
 
 	log.Printf("Deleting Pod %q.\n", result.GetObjectMeta().GetName())
 	controller.clientset.CoreV1().Pods(namespace).Delete(podName, &metav1.DeleteOptions{})
+	time.Sleep(10 * time.Second)
 
 }
 
@@ -134,6 +135,7 @@ func TestControllerForUpdatePodShouldUpdateAndSendMessage(t *testing.T) {
 	time.Sleep(10 * time.Second)
 	log.Printf("Deleting Pod %q.\n", pod.GetObjectMeta().GetName())
 	controller.clientset.CoreV1().Pods(namespace).Delete(podName, &metav1.DeleteOptions{})
+	time.Sleep(10 * time.Second)
 }
 
 func podWithResources(namespace string, podName string) *v1.Pod {
