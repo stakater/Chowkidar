@@ -4,13 +4,13 @@ import (
 	"log"
 	"testing"
 
-	"github.com/stakater/Chowkidar/pkg/config"
+	"github.com/stakater/Chowkidar/internal/pkg/config"
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 var (
-	configFilePath   = "../../../configs/testConfigs/CorrectSlackConfig.yaml"
+	configFilePath   = "../../../../configs/testConfigs/CorrectSlackConfig.yaml"
 	configuration, _ = config.ReadConfig(configFilePath)
 )
 

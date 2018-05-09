@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stakater/Chowkidar/pkg/config"
+	"github.com/stakater/Chowkidar/internal/pkg/config"
 	"github.com/stakater/Chowkidar/pkg/kube"
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -16,7 +16,7 @@ import (
 
 var (
 	clientSet, _     = kube.GetClient()
-	configFilePath   = "../../configs/testConfigs/CorrectConfig.yaml"
+	configFilePath   = "../../../configs/testConfigs/CorrectConfig.yaml"
 	configuration, _ = config.ReadConfig(configFilePath)
 )
 

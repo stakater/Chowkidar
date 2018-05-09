@@ -3,7 +3,7 @@ package criterion
 import (
 	"testing"
 
-	"github.com/stakater/Chowkidar/pkg/config"
+	"github.com/stakater/Chowkidar/internal/pkg/config"
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

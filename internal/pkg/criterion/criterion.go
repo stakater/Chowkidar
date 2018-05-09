@@ -3,7 +3,7 @@ package criterion
 import (
 	"reflect"
 
-	"github.com/stakater/Chowkidar/pkg/config"
+	"github.com/stakater/Chowkidar/internal/pkg/config"
 )
 
 func MatchFuncSingle(mapFunc interface{}, criterion config.Criterion) func(interface{}) {

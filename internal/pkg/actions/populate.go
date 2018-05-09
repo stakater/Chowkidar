@@ -3,7 +3,7 @@ package actions
 import (
 	"log"
 
-	"github.com/stakater/Chowkidar/pkg/config"
+	"github.com/stakater/Chowkidar/internal/pkg/config"
 )
 
 // PopulateFromConfig populates the actions for a specific controller from config

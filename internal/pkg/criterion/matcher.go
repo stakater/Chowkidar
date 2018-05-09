@@ -3,7 +3,7 @@ package criterion
 import (
 	"log"
 
-	"github.com/stakater/Chowkidar/pkg/config"
+	"github.com/stakater/Chowkidar/internal/pkg/config"
 	"k8s.io/api/core/v1"
 )
 

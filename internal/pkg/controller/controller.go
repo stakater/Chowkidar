@@ -5,9 +5,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/stakater/Chowkidar/pkg/actions"
-	"github.com/stakater/Chowkidar/pkg/config"
-	"github.com/stakater/Chowkidar/pkg/criterion"
+	"github.com/stakater/Chowkidar/internal/pkg/actions"
+	"github.com/stakater/Chowkidar/internal/pkg/config"
+	"github.com/stakater/Chowkidar/internal/pkg/criterion"
 	"github.com/stakater/Chowkidar/pkg/kube"
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/util/runtime"

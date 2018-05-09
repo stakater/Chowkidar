@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/stakater/Chowkidar/pkg/actions/slack"
+	"github.com/stakater/Chowkidar/internal/pkg/actions/slack"
 )
 
 func TestMapToAction(t *testing.T) {

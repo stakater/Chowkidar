@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	configFilePath = "../../configs/testConfigs/"
+	configFilePath = "../../../configs/testConfigs/"
 )
 
 func TestReadConfig(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 
 	"github.com/asiyani/slack"
 	"github.com/mitchellh/mapstructure"
-	"github.com/stakater/Chowkidar/pkg/config"
+	"github.com/stakater/Chowkidar/internal/pkg/config"
 	"k8s.io/api/core/v1"
 )
 
