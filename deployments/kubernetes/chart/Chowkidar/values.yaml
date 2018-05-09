@@ -8,10 +8,10 @@ chowkidar:
   labels:
     provider: stakater
     group: com.stakater.platform
-    version: 0.0.4
+    version: 0.0.5
   image:
     name: stakater/chowkidar
-    tag: "0.0.4"
+    tag: "0.0.5"
     pullPolicy: IfNotPresent
   controllers:
     - type: pods
@@ -22,8 +22,8 @@ chowkidar:
         - "healthCheckExists"
       actions:
       - name: slack
-      params: 
-        token: your-token
-        channel: channel-name
+        params: 
+          token: your-token
+          channel: channel-name
 
   configFilePath: /configs/config.yaml
