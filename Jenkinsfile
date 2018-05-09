@@ -1,13 +1,12 @@
 #!/usr/bin/groovy
 @Library('github.com/stakater/fabric8-pipeline-library@master')
 
-def utils = new io.fabric8.Utils()
+def dummy
 
-String chartPackageName = ""
-
-toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.1') {
+toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.2') {
     container(name: 'tools') {
         withCurrentRepo(type: 'go') { def repoUrl, def repoName, def repoOwner, def repoBranch ->
+            String chartPackageName = ""
             String srcDir = WORKSPACE
             def kubernetesDir = WORKSPACE + "/deployments/kubernetes"
 
@@ -22,7 +21,8 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.1') {
             // Slack variables
             def slackChannel = "${env.SLACK_CHANNEL}"
             def slackWebHookURL = "${env.SLACK_WEBHOOK_URL}"
-            
+    
+            def utils = new io.fabric8.Utils()        
             def git = new io.stakater.vc.Git()
             def helm = new io.stakater.charts.Helm()
             def templates = new io.stakater.charts.Templates()
@@ -70,11 +70,11 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.1') {
                 } else if (utils.isCD()) {
                     stage('CD: Tag and Push') {
                         print "Generating New Version"
-                        def version = common.shOutput("jx-release-version --gh-owner=${repoOwner} --gh-repository=${repoName}")
+                        def versionFile = ".version"
+                        def version = common.shOutput("jx-release-version --gh-owner=${repoOwner} --gh-repository=${repoName} --version-file ${versionFile}")
                         dockerImageVersion = version
-                        //TODO: jx-release-version won't read bumped version from .version
                         sh """
-                            echo "${version}" > .version
+                            echo "${version}" > ${versionFile}
                         """
 
                         // Render chart from templates
@@ -89,15 +89,10 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.1') {
                         git.createRelease(version)
 
                         print "Pushing Tag ${version} to DockerHub"
-                        
-                        sh """
-                            cd ${srcDir}
-                            export DOCKER_IMAGE=${dockerImage}
-                            export DOCKER_TAG=${dockerImageVersion}
-                            make binary-image
-                            make push
-                        """
-                        //TODO: push with latest tag missing
+                        docker.buildImageWithTag(dockerContextDir, dockerImage, "latest")
+                        docker.tagImage(dockerImage, "latest", version)
+                        docker.pushTag(dockerImage, version)
+                        docker.pushTag(dockerImage, "latest")
                     }
                     
                     stage('Chart: Init Helm') {
@@ -110,9 +105,7 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.1') {
                     }
 
                     stage('Chart: Upload') {
-                        String cmUsername = common.getEnvValue('CHARTMUSEUM_USERNAME')
-                        String cmPassword = common.getEnvValue('CHARTMUSEUM_PASSWORD')
-                        chartManager.uploadToChartMuseum(chartDir, repoName, chartPackageName, cmUsername, cmPassword)
+                        chartManager.uploadToChartMuseum(chartDir, repoName, chartPackageName, "${env.CHARTMUSEUM_USERNAME}", "${env.CHARTMUSEUM_PASSWORD}")
                     }
 
                     stage('Notify') {
