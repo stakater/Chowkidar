@@ -17,12 +17,13 @@ data:
         identifiers: 
         {{- range .watchcriterion.identifiers }}
         - {{ . }}        
-        {{- end}}
+        {{- end }}
       actions:
       {{- range .actions }}
       - name: {{ .name }}
-        params: {{ .params }}
-          token: {{ .token }}
-          channel: {{ .channel }}
+        params:
+        {{- range $key, $value := .params }}
+          {{ $key }}: {{ $value }}
+        {{- end }}
       {{- end }}
     {{- end }}
