@@ -5,6 +5,10 @@ import (
 	"testing"
 )
 
+var (
+	configFilePath = "../../configs/testConfigs/"
+)
+
 func TestReadConfig(t *testing.T) {
 	type args struct {
 		filePath string
@@ -17,7 +21,7 @@ func TestReadConfig(t *testing.T) {
 	}{
 		{
 			name: "TestingWithCorrectValues",
-			args: args{filePath: "../../configs/testConfigs/CorrectSlackConfig.yaml"},
+			args: args{filePath: configFilePath + "CorrectSlackConfig.yaml"},
 			want: Config{
 				Controllers: []Controller{
 					Controller{
@@ -44,12 +48,12 @@ func TestReadConfig(t *testing.T) {
 		},
 		{
 			name: "TestingWithEmptyFile",
-			args: args{filePath: "../../configs/testConfigs/Empty.yaml"},
+			args: args{filePath: configFilePath + "Empty.yaml"},
 			want: Config{},
 		},
 		{
 			name: "TestingWithNoAction",
-			args: args{filePath: "../../configs/testConfigs/NoActions.yaml"},
+			args: args{filePath: configFilePath + "NoActions.yaml"},
 			want: Config{
 				Controllers: []Controller{
 					Controller{
@@ -67,7 +71,7 @@ func TestReadConfig(t *testing.T) {
 		},
 		{
 			name:    "TestingWithFileNotPresent",
-			args:    args{filePath: "../../configs/testConfigs/FileNotFound.yaml"},
+			args:    args{filePath: configFilePath + "FileNotFound.yaml"},
 			wantErr: true,
 		},
 	}
