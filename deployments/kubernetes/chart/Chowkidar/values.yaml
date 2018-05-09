@@ -10,7 +10,7 @@ chowkidar:
     group: com.stakater.platform
   image:
     name: stakater/chowkidar
-    tag: "0.0.1"
+    tag: "0.0.2"
     pullPolicy: IfNotPresent
   controllers:
     - type: pods
