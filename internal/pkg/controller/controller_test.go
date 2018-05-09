@@ -51,7 +51,7 @@ func TestControllerForPodWithoutResourcesDefaultAction(t *testing.T) {
 	time.Sleep(10 * time.Second)
 	log.Printf("Deleting Pod %q.\n", result.GetObjectMeta().GetName())
 	controller.clientset.CoreV1().Pods(namespace).Delete(podName, &metav1.DeleteOptions{})
-	time.Sleep(10 * time.Second)
+	time.Sleep(15 * time.Second)
 }
 
 // Creating a Controller for Pod with Default Action with Resources so no message printed
@@ -73,11 +73,11 @@ func TestControllerForPodWithResourcesDefaultAction(t *testing.T) {
 		panic(err)
 	}
 	log.Printf("Created Pod %q.\n", result.GetObjectMeta().GetName())
-	time.Sleep(10 * time.Second)
+	time.Sleep(15 * time.Second)
 
 	log.Printf("Deleting Pod %q.\n", result.GetObjectMeta().GetName())
 	controller.clientset.CoreV1().Pods(namespace).Delete(podName, &metav1.DeleteOptions{})
-	time.Sleep(10 * time.Second)
+	time.Sleep(15 * time.Second)
 
 }
 
@@ -101,7 +101,7 @@ func TestControllerForUpdatePodShouldUpdateDefaultAction(t *testing.T) {
 		panic(err)
 	}
 	log.Printf("Created Pod %q.\n", pod.GetObjectMeta().GetName())
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	pod.Spec.Containers[0].Resources = v1.ResourceRequirements{
 		Limits: v1.ResourceList{
 			"cpu":    resource.Quantity{},
@@ -124,7 +124,7 @@ func TestControllerForUpdatePodShouldUpdateDefaultAction(t *testing.T) {
 	time.Sleep(10 * time.Second)
 	log.Printf("Deleting Pod %q.\n", pod.GetObjectMeta().GetName())
 	controller.clientset.CoreV1().Pods(namespace).Delete(podName, &metav1.DeleteOptions{})
-	time.Sleep(10 * time.Second)
+	time.Sleep(15 * time.Second)
 }
 
 func podWithResources(namespace string, podName string) *v1.Pod {
