@@ -1,0 +1,12 @@
+controllers:
+- type: pods
+  watchcriterion:
+    operator: and
+    identifiers: 
+      - "resourceExists"
+      - "healthCheckExists"
+  actions:
+  - name: slack
+    params:
+      token: "123"
+      channel: "channelName"

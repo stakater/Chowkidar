@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    fabric8.io/target-platform: kubernetes
+  labels:
+{{ include "labels.stakater" . | indent 4 }}
+{{ include "labels.chart" . | indent 4 }}
+  name: {{ template "name" . }}
+data:
+  config.yaml: |-
+    controllers: 
+    {{- range .Values.chowkidar.controllers }}
+    - type: {{ .type }}
+      watchcriterion: 
+        operator: {{ .operator }}
+        identifiers: 
+        {{- range .watchcriterion.identifiers }}
+        - {{ . }}        
+        {{- end}}
+      actions:
+      {{- range .actions }}
+      - name: {{ .name }}
+        params: {{ .params }}
+          token: {{ .token }}
+          channel: {{ .channel }}
+      {{- end }}
+    {{- end }}

@@ -1,7 +1,14 @@
 package main
 
-import "fmt"
+import (
+	"os"
+
+	"github.com/stakater/Chowkidar/internal/pkg/app"
+)
 
 func main() {
-	fmt.Println("Starting Chowkidar!")
+	if err := app.Run(); err != nil {
+		os.Exit(1)
+	}
+	os.Exit(0)
 }

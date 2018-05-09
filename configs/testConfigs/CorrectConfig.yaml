@@ -1,0 +1,9 @@
+controllers:
+- type: pods
+  watchcriterion:
+    operator: and
+    identifiers: 
+      - "resourceExists"
+      - "healthCheckExists"
+  actions:
+  - name: default

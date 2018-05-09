@@ -1,18 +1,20 @@
 FROM golang:alpine
 MAINTAINER "Stakater Team"
 
-RUN apk update && \
-    apk add git build-base && \
+RUN apk update
+
+RUN apk -v --update \
+    add git build-base && \
     rm -rf /var/cache/apk/* && \
-    mkdir -p "$GOPATH/src/github.com/stakater/chowkidar"
+    mkdir -p "$GOPATH/src/github.com/stakater/Chowkidar"
 
-ADD . "$GOPATH/src/github.com/stakater/chowkidar"
+ADD . "$GOPATH/src/github.com/stakater/Chowkidar"
 
-RUN cd "$GOPATH/src/github.com/stakater/chowkidar" && \
-    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a --installsuffix cgo --ldflags="-s" -o /chowkidar
+RUN cd "$GOPATH/src/github.com/stakater/Chowkidar" && \
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a --installsuffix cgo --ldflags="-s" -o /Chowkidar
 
 COPY build/package/Dockerfile.run /
 
 # Running this image produces a tarball suitable to be piped into another
 # Docker build command.
-CMD tar -cf - -C / Dockerfile.run chowkidar
+CMD tar -cf - -C / Dockerfile.run Chowkidar
