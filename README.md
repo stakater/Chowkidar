@@ -6,8 +6,8 @@
 [![GitHub tag](https://img.shields.io/github/tag/stakater/chowkidar.svg?style=flat-square)](https://github.com/stakater/chowkidar/releases/latest)
 [![Docker Pulls](https://img.shields.io/docker/pulls/stakater/chowkidar.svg?style=flat-square)](https://hub.docker.com/r/stakater/chowkidar/)
 [![Docker Stars](https://img.shields.io/docker/stars/stakater/chowkidar.svg?style=flat-square)](https://hub.docker.com/r/stakater/chowkidar/)
-[![MicroBadger Size](https://img.shields.io/microbadger/image-size/jumanjiman/puppet.svg?style=flat-square)](https://microbadger.com/images/stakater/chowkidar)
-[![MicroBadger Layers](https://img.shields.io/microbadger/layers/_/httpd.svg?style=flat-square)](https://microbadger.com/images/stakater/chowkidar)
+[![MicroBadger Size](https://img.shields.io/microbadger/image-size/stakater/chowkidar.svg?style=flat-square)](https://microbadger.com/images/stakater/chowkidar)
+[![MicroBadger Layers](https://img.shields.io/microbadger/layers/stakater/chowkidar.svg?style=flat-square)](https://microbadger.com/images/stakater/chowkidar)
 [![license](https://img.shields.io/github/license/stakater/chowkidar.svg?style=flat-square)](LICENSE)
 
 ## WHY NAME CHOWKIDAR?
