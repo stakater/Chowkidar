@@ -1,26 +1,34 @@
+---
+# Source: Chowkidar/templates/rbac.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
     app: chowkidar
     group: com.stakater.platform
-    version: dev
     provider: stakater
+    version: 
+    chart: "Chowkidar-0.0.1"
+    release: "RELEASE-NAME"
+    heritage: "Tiller"
   name: chowkidar
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: Role
+kind: ClusterRole
 metadata:
-  labels:
+  labels: 
     app: chowkidar
     group: com.stakater.platform
-    version: dev
     provider: stakater
-  name: chowkidar
+    version: 
+    chart: "Chowkidar-0.0.1"
+    release: "RELEASE-NAME"
+    heritage: "Tiller"
+  name: chowkidar-role
 rules:
   - apiGroups:
       - ""
-    resources:
+    resources:      
       - pods
     verbs:
       - list
@@ -28,19 +36,22 @@ rules:
       - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
-  labels:
+  labels: 
     app: chowkidar
     group: com.stakater.platform
-    version: dev
     provider: stakater
-  name: chowkidar
+    version: 
+    chart: "Chowkidar-0.0.1"
+    release: "RELEASE-NAME"
+    heritage: "Tiller"
+  name: chowkidar-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: chowkidar
+  kind: ClusterRole
+  name: chowkidar-role
 subjects:
   - kind: ServiceAccount
     name: chowkidar
-    namespace: dev
+    namespace: default

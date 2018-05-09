@@ -1,3 +1,5 @@
+---
+# Source: Chowkidar/templates/deployment.yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -6,12 +8,20 @@ metadata:
   labels:
     app: chowkidar
     group: com.stakater.platform
-    version: dev
     provider: stakater
+    version: 
+    chart: "Chowkidar-0.0.1"
+    release: "RELEASE-NAME"
+    heritage: "Tiller"
   name: chowkidar
 spec:
   replicas: 1
   revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: chowkidar
+      group: com.stakater.platform
+      provider: stakater
   template:
     metadata:
       annotations:
@@ -19,7 +29,6 @@ spec:
       labels:
         app: chowkidar
         group: com.stakater.platform
-        version: dev
         provider: stakater
     spec:
       containers:
@@ -29,15 +38,16 @@ spec:
             fieldRef:
               fieldPath: metadata.namespace
         - name: CONFIG_FILE_PATH
-          value: /etc/chowkidar/chowkidar.yaml
-        image: stakater/chowkidar:dev
-        imagePullPolicy: Always
+          value: /configs/config.yaml
+        image: "stakater/chowkidar:0.0.1"
+        imagePullPolicy: IfNotPresent
         name: chowkidar
         volumeMounts:
-        - mountPath: /etc/chowkidar
+        - mountPath: /configs
           name: config-volume
       serviceAccountName: chowkidar
       volumes:
       - configMap:
           name: chowkidar
         name: config-volume
+              
