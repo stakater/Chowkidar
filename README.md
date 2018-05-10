@@ -10,8 +10,10 @@
 [![MicroBadger Layers](https://img.shields.io/microbadger/layers/stakater/chowkidar.svg?style=flat-square)](https://microbadger.com/images/stakater/chowkidar)
 [![license](https://img.shields.io/github/license/stakater/chowkidar.svg?style=flat-square)](LICENSE)
 
+[![Get started with Stakater](https://stakater.github.io/README/stakater-github-banner.png)](http://stakater.com/?utm_source=Chowkidar&utm_medium=github)
+
 ## WHY NAME CHOWKIDAR?
-Chowkidar, an Urdu word, is used for Security Guards in Pakistan. This Chowkidar will stand guard your cluster and will look for any anomaly in the cluster and will act as you want it to.
+Chowkidar, an Urdu word, is used for Watchman in Pakistan. This Chowkidar will watch over your cluster, looking for any anomaly in the cluster and will act as you want it to.
 
 ## Problem
 We would like to watch for relevant events happening inside kubernetes and then perform actions depending upon the criteria.
