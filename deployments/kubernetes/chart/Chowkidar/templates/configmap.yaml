@@ -12,10 +12,10 @@ data:
     controllers: 
     {{- range .Values.chowkidar.controllers }}
     - type: {{ .type }}
-      watchcriterion: 
+      watchcriterion: {{ .watchcriterion }}
         operator: {{ .operator }}
         identifiers: 
-        {{- range .watchcriterion.identifiers }}
+        {{- range .identifiers }}
         - {{ . }}        
         {{- end }}
       actions:
