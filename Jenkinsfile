@@ -80,6 +80,10 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.6.0') {
                             echo "${version}" > ${versionFile}
                         """
 
+                        sh """
+                            stk notify jira --comment "Version ${version} of ${repoName} has been successfully built and released."
+                        """
+
                         // Render chart from templates
                         templates.renderChart(chartTemplatesDir, chartDir, repoName, version, dockerImage)
                         // Generate manifests from chart
@@ -119,9 +123,6 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.6.0') {
 
                         def commentMessage = "Image is available for testing. ``docker pull ${dockerImageWithTag}``"
                         git.addCommentToPullRequest(commentMessage)
-                        sh """
-                            stk notify jira --comment "${commentMessage}"
-                        """
                     }
                 }
             }
