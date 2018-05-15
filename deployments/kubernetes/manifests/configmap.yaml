@@ -9,8 +9,8 @@ metadata:
     app: chowkidar
     group: com.stakater.platform
     provider: stakater
-    version: 0.0.11
-    chart: "Chowkidar-0.0.11"
+    version: 0.0.12
+    chart: "Chowkidar-0.0.12"
     release: "RELEASE-NAME"
     heritage: "Tiller"
   name: chowkidar
@@ -18,6 +18,11 @@ data:
   config.yaml: |-
     controllers:
     - type: pods
+      watchcriterion:
+        operator: and
+        identifiers:
+        - resourceExists
+        - healthCheckExists
       actions:
       - name: slack
         params:
