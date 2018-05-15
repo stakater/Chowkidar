@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"testing"
 	"time"
 
@@ -18,8 +19,18 @@ var (
 	clientSet, _     = kube.GetClient()
 	configFilePath   = "../../../configs/testConfigs/CorrectConfig.yaml"
 	configuration, _ = config.ReadConfig(configFilePath)
+
+	podNamePrefix = "testpod-chowkidar"
+	letters       = []rune("abcdefghijklmnopqrstuvwxyz")
 )
 
+func randSeq(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
+}
 func TestControllerWithWrongTypeShouldNotCreate(t *testing.T) {
 	_, err := NewController(clientSet, configuration.Controllers[0])
 	if err != nil {
@@ -40,7 +51,7 @@ func TestControllerForPodWithoutResourcesDefaultAction(t *testing.T) {
 	go controller.Run(1, stop)
 	time.Sleep(10 * time.Second)
 	namespace := "test"
-	podName := "testpod-withoutresources-chowkidar"
+	podName := podNamePrefix + "-withoutresources-" + randSeq(5)
 	pod := podWithoutResources(namespace, podName)
 	result, err := clientSet.CoreV1().Pods(namespace).Create(pod)
 	if err != nil {
@@ -66,7 +77,7 @@ func TestControllerForPodWithResourcesDefaultAction(t *testing.T) {
 	go controller.Run(1, stop)
 	time.Sleep(10 * time.Second)
 	namespace := "test"
-	podName := "testpod-withresources-chowkidar"
+	podName := podNamePrefix + "-withresources-" + randSeq(5)
 	pod := podWithResources(namespace, podName)
 	result, err := clientSet.CoreV1().Pods(namespace).Create(pod)
 	if err != nil {
@@ -93,7 +104,7 @@ func TestControllerForUpdatePodShouldUpdateDefaultAction(t *testing.T) {
 	go controller.Run(1, stop)
 	time.Sleep(10 * time.Second)
 	namespace := "test"
-	podName := "testpod-withoutresources-chowkidar"
+	podName := podNamePrefix + "-withoutresources-update-" + randSeq(5)
 	podClient := clientSet.CoreV1().Pods(namespace)
 	pod := podWithoutResources(namespace, podName)
 	pod, err = podClient.Create(pod)

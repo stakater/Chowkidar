@@ -9,7 +9,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func Test_matchesCriterion(t *testing.T) {
+func Test_MatchesCriterion(t *testing.T) {
 	type args struct {
 		obj       interface{}
 		criterion config.Criterion
@@ -101,8 +101,8 @@ func Test_matchesCriterion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := matchesCriterion(tt.args.obj, tt.args.criterion); got != tt.want {
-				t.Errorf("matchesCriterion() = %v, want %v", got, tt.want)
+			if got := MatchesCriterion(tt.args.obj, tt.args.criterion); got != tt.want {
+				t.Errorf("MatchesCriterion() = %v, want %v", got, tt.want)
 			}
 		})
 	}
