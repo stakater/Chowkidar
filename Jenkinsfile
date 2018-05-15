@@ -64,7 +64,7 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.6.0') {
                         def dockerImageWithTag = "${dockerImage}:${dockerImageVersion}"
                         slack.sendDefaultSuccessNotification(slackWebHookURL, slackChannel, [slack.createDockerImageField(dockerImageWithTag)])
 
-                        def commentMessage = "Image is available for testing. `docker pull ${dockerImageWithTag}`"
+                        def commentMessage = "Image is available for testing. ``docker pull ${dockerImageWithTag}``"
                         git.addCommentToPullRequest(commentMessage)
                         sh """
                             stk notify jira --comment "${commentMessage}"
@@ -117,7 +117,7 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.6.0') {
                         def dockerImageWithTag = "${dockerImage}:${dockerImageVersion}"
                         slack.sendDefaultSuccessNotification(slackWebHookURL, slackChannel, [slack.createDockerImageField(dockerImageWithTag)])
 
-                        def commentMessage = "Image is available for testing. `docker pull ${dockerImageWithTag}`"
+                        def commentMessage = "Image is available for testing. ``docker pull ${dockerImageWithTag}``"
                         git.addCommentToPullRequest(commentMessage)
                         sh """
                             stk notify jira --comment "${commentMessage}"
