@@ -87,9 +87,13 @@ func (c *Controller) Update(old interface{}, new interface{}) {
 	var event Event
 
 	if err == nil {
-		event.key = key
-		event.eventType = "update"
-		c.queue.Add(event)
+		if criterion.MatchesCriterion(old, c.controllerConfig.WatchCriterion) {
+			if !criterion.MatchesCriterion(new, c.controllerConfig.WatchCriterion) {
+				event.key = key
+				event.eventType = "update"
+				c.queue.Add(event)
+			}
+		}
 	}
 }
 
@@ -135,7 +139,7 @@ func (c *Controller) processNextItem() bool {
 		return false
 	}
 	// Tell the queue that we are done with processing this key. This unblocks the key for other workers
-	// This allows safe parallel processing because two ingresses with the same key are never processed in
+	// This allows safe parallel processing because two events with the same key are never processed in
 	// parallel.
 	defer c.queue.Done(event)
 
@@ -186,7 +190,7 @@ func (c *Controller) handleErr(err error, key interface{}) {
 
 	// This controller retries 5 times if something goes wrong. After that, it stops trying.
 	if c.queue.NumRequeues(key) < 5 {
-		log.Printf("Error syncing ingress %v: %v", key, err)
+		log.Printf("Error syncing events %v: %v", key, err)
 
 		// Re-enqueue the key rate limited. Based on the rate limiter on the
 		// queue and the re-enqueue history, the key will be processed later again.

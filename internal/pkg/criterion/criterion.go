@@ -9,7 +9,7 @@ import (
 func MatchFuncSingle(mapFunc interface{}, criterion config.Criterion) func(interface{}) {
 	return func(value interface{}) {
 		//TODO: Create a criterion matcher and use it here
-		if matchesCriterion(value, criterion) {
+		if MatchesCriterion(value, criterion) {
 			funcValue := reflect.ValueOf(mapFunc)
 
 			funcValue.Call([]reflect.Value{
@@ -23,7 +23,7 @@ func MatchFuncSingle(mapFunc interface{}, criterion config.Criterion) func(inter
 func MatchFuncMulti(mapFunc interface{}, criterion config.Criterion) func(interface{}, interface{}) {
 	return func(value1 interface{}, value2 interface{}) {
 		//TODO: Create a criterion matcher and use it here
-		if matchesCriterion(value1, criterion) {
+		if MatchesCriterion(value1, criterion) {
 			funcValue := reflect.ValueOf(mapFunc)
 
 			funcValue.Call([]reflect.Value{

@@ -8,7 +8,8 @@ import (
 )
 
 //TODO: Create a criterion matcher and refactor this
-func matchesCriterion(obj interface{}, criterion config.Criterion) bool {
+//MatchesCriterion checks if the object matches the given criterion
+func MatchesCriterion(obj interface{}, criterion config.Criterion) bool {
 	for _, identifier := range criterion.Identifiers {
 		if identifier == "resourceExists" {
 			log.Println("Checking for resources block on Pod: `", obj.(*v1.Pod).Name+"`")
