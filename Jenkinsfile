@@ -3,7 +3,7 @@
 
 def dummy
 
-toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.2') {
+toolsNode(toolsImage: 'stakater/pipeline-tools:1.6.0') {
     container(name: 'tools') {
         withCurrentRepo(type: 'go') { def repoUrl, def repoName, def repoOwner, def repoBranch ->
             String chartPackageName = ""
@@ -66,6 +66,9 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.2') {
 
                         def commentMessage = "Image is available for testing. `docker pull ${dockerImageWithTag}`"
                         git.addCommentToPullRequest(commentMessage)
+                        sh """
+                            stk notify jira --comment ${commentMessage}
+                        """
                     }
                 } else if (utils.isCD()) {
                     stage('CD: Tag and Push') {
@@ -116,6 +119,9 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.2') {
 
                         def commentMessage = "Image is available for testing. `docker pull ${dockerImageWithTag}`"
                         git.addCommentToPullRequest(commentMessage)
+                        sh """
+                            stk notify jira --comment ${commentMessage}
+                        """
                     }
                 }
             }
@@ -124,7 +130,9 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.5.2') {
             
                 def commentMessage = "Yikes! You better fix it before anyone else finds out! [Build ${env.BUILD_NUMBER}](${env.BUILD_URL}) has Failed!"
                 git.addCommentToPullRequest(commentMessage)
-
+                sh """
+                    stk notify jira --comment ${commentMessage}
+                """
                 throw e
             }
         }
