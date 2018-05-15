@@ -9,8 +9,8 @@ metadata:
     app: chowkidar
     group: com.stakater.platform
     provider: stakater
-    version: 0.0.9
-    chart: "Chowkidar-0.0.9"
+    version: 0.0.10
+    chart: "Chowkidar-0.0.10"
     release: "RELEASE-NAME"
     heritage: "Tiller"
   name: chowkidar
@@ -39,7 +39,7 @@ spec:
               fieldPath: metadata.namespace
         - name: CONFIG_FILE_PATH
           value: /configs/config.yaml
-        image: "stakater/chowkidar:0.0.9"
+        image: "stakater/chowkidar:0.0.10"
         imagePullPolicy: IfNotPresent
         name: chowkidar
         volumeMounts:
