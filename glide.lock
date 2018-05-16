@@ -1,5 +1,5 @@
-hash: c90fdd8724d3f48e980326a18d5d257787205f72ff13f3573e40fa96e5483ab5
-updated: 2018-05-09T14:38:31.080264049+05:00
+hash: 9ea76aab1c6f869460b011d620b24070051c88832f9fbc938e399bd9d0b6ca54
+updated: 2018-05-16T11:57:27.284871821+05:00
 imports:
 - name: github.com/asiyani/slack
   version: 150279a4ad4b11910003e30be7ffe7fdb5523634
@@ -75,7 +75,7 @@ imports:
   - jlexer
   - jwriter
 - name: github.com/mitchellh/mapstructure
-  version: 00c29f56e2386353d58c599509e8dc3801b0d716
+  version: bb74f1db0675b241733089d5a1faa5dd8b0ef57b
 - name: github.com/peterbourgon/diskv
   version: 5f041e8faa004a95c88a202771f4cc3e991971e6
 - name: github.com/PuerkitoBio/purell
@@ -120,7 +120,7 @@ imports:
 - name: gopkg.in/inf.v0
   version: 3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4
 - name: gopkg.in/yaml.v2
-  version: 53feefa2559fb8dfa8d81baad31be332c97d6c77
+  version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 - name: k8s.io/api
   version: fe29995db37613b9c5b2a647544cf627bfa8d299
   subpackages:

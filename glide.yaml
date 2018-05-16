@@ -7,11 +7,15 @@ import:
 - package: k8s.io/client-go
   version: 5.0.0
 - package: gopkg.in/yaml.v2
+  version: v2.2.1
 # TODO: Change this back to nlopes when that issue is fixed 
 # URL: https://github.com/nlopes/slack/issues/294
 - package: github.com/asiyani/slack
+  version: 150279a4ad4b11910003e30be7ffe7fdb5523634
 # - package: github.com/nlopes/slack
 - package: github.com/mitchellh/mapstructure
+  version: bb74f1db0675b241733089d5a1faa5dd8b0ef57b
 - package: github.com/spf13/cobra
+  version: ef82de70bb3f60c65fb8eebacbb2d122ef517385
 - package: github.com/spf13/pflag
   version: 583c0c0531f06d5278b7d917446061adc344b5cd
