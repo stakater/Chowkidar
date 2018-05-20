@@ -7,8 +7,8 @@ metadata:
     app: chowkidar
     group: com.stakater.platform
     provider: stakater
-    version: 0.0.15
-    chart: "Chowkidar-0.0.15"
+    version: 0.0.16
+    chart: "Chowkidar-0.0.16"
     release: "RELEASE-NAME"
     heritage: "Tiller"
   name: chowkidar
@@ -20,8 +20,8 @@ metadata:
     app: chowkidar
     group: com.stakater.platform
     provider: stakater
-    version: 0.0.15
-    chart: "Chowkidar-0.0.15"
+    version: 0.0.16
+    chart: "Chowkidar-0.0.16"
     release: "RELEASE-NAME"
     heritage: "Tiller"
   name: chowkidar-role
@@ -42,8 +42,8 @@ metadata:
     app: chowkidar
     group: com.stakater.platform
     provider: stakater
-    version: 0.0.15
-    chart: "Chowkidar-0.0.15"
+    version: 0.0.16
+    chart: "Chowkidar-0.0.16"
     release: "RELEASE-NAME"
     heritage: "Tiller"
   name: chowkidar-role-binding
