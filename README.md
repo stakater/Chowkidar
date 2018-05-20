@@ -1,4 +1,4 @@
-# Chowkidar
+# ![](assets/web/chowkidar-white-round-border-100px.png) Chowkidar
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/stakater/chowkidar?style=flat-square)](https://goreportcard.com/report/github.com/stakater/chowkidar)
 [![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](http://godoc.org/github.com/stakater/chowkidar)
