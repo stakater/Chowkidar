@@ -37,4 +37,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: {{ template "name" . }}
-    namespace: {{ .Values.chowkidar.namespace }}
+    namespace: .Release.Namespace
