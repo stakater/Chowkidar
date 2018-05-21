@@ -72,7 +72,6 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.6.0') {
                     }
                 } else if (utils.isCD()) {
                     stage('CD: Tag and Push') {
-                        def chartRepoUrl = "git@github.com:stakater/charts.git"
                         print "Generating New Version"
                         def versionFile = ".version"
                         def version = common.shOutput("jx-release-version --gh-owner=${repoOwner} --gh-repository=${repoName} --version-file ${versionFile}")
@@ -101,12 +100,6 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.6.0') {
                         docker.tagImage(dockerImage, "latest", version)
                         docker.pushTag(dockerImage, version)
                         docker.pushTag(dockerImage, "latest")
-
-                        chartPackageName = helm.package(chartDir, repoName)
-                        def chartRepoName = "charts"
-                        git.checkoutRepo(chartRepoUrl, "master", chartRepoName)
-                        def packagedChartLocation = chartDir + "/" + repoName + "/" + chartPackageName;
-                        chartManager.uploadToGithub(chartRepoName, packagedChartLocation)
                     }
                     
                     stage('Chart: Init Helm') {
@@ -119,9 +112,16 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.6.0') {
                     }
 
                     stage('Chart: Upload') {
+                        def chartRepoUrl = "git@github.com:stakater/charts.git"
                         String cmUsername = common.getEnvValue('CHARTMUSEUM_USERNAME')
                         String cmPassword = common.getEnvValue('CHARTMUSEUM_PASSWORD')
                         chartManager.uploadToChartMuseum(chartDir, repoName, chartPackageName, cmUsername, cmPassword)
+
+                        // Upload chart to github.com/stakater/charts
+                        def chartRepoName = "charts"
+                        git.checkoutRepo(chartRepoUrl, "master", chartRepoName)
+                        def packagedChartLocation = chartDir + "/" + repoName + "/" + chartPackageName;
+                        chartManager.uploadToGithub(chartRepoName, packagedChartLocation)
                     }
 
                     stage('Notify') {
