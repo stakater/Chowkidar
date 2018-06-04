@@ -85,9 +85,9 @@ toolsNode(toolsImage: 'stakater/pipeline-tools:1.6.0') {
                         """
 
                         // Render chart from templates
-                        templates.renderChart(chartTemplatesDir, chartDir, repoName, version, dockerImage)
+                        templates.renderChart(chartTemplatesDir, chartDir, repoName.toLowerCase(), version, dockerImage)
                         // Generate manifests from chart
-                        templates.generateManifests(chartDir, repoName, manifestsDir)
+                        templates.generateManifests(chartDir, repoName.toLowerCase(), manifestsDir)
 
                         git.commitChanges(WORKSPACE, "Bump Version to ${version}")
 
