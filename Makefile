@@ -2,8 +2,8 @@
 
 .PHONY: default build builder-image binary-image test stop clean-images clean push apply deploy
 
-BUILDER = chowkidar-builder
-BINARY = Chowkidar
+BUILDER ?= chowkidar-builder
+BINARY ?= Chowkidar
 DOCKER_IMAGE ?= stakater/chowkidar
 # Default value "dev"
 DOCKER_TAG ?= dev
@@ -19,9 +19,9 @@ LDFLAGS =
 
 default: build test
 
-install: 
+install:
 	"$(GLIDECMD)" install
-	cp -r vendor/* ${GOPATH}/src/ 
+	cp -r vendor/* ${GOPATH}/src/
 	rm -rf vendor
 
 build:
