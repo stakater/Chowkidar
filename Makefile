@@ -46,7 +46,7 @@ clean:
 	"$(GOCMD)" clean -i
 
 push: ## push the latest Docker image to DockerHub
-	docker push --network host $(REPOSITORY)
+	docker push $(REPOSITORY)
 
 apply:
 	kubectl apply -f deployments/manifests/
