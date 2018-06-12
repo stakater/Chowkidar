@@ -2,8 +2,8 @@
 
 .PHONY: default build builder-image binary-image test stop clean-images clean push apply deploy
 
-BUILDER = chowkidar-builder
-BINARY = Chowkidar
+BUILDER ?= chowkidar-builder
+BINARY ?= Chowkidar
 DOCKER_IMAGE ?= stakater/chowkidar
 # Default value "dev"
 DOCKER_TAG ?= dev
@@ -19,19 +19,17 @@ LDFLAGS =
 
 default: build test
 
-install: 
+install:
 	"$(GLIDECMD)" install
-	cp -r vendor/* ${GOPATH}/src/ 
-	rm -rf vendor
 
 build:
 	"$(GOCMD)" build ${GOFLAGS} ${LDFLAGS} -o "${BINARY}"
 
 builder-image:
-	@docker build -t "${BUILDER}" -f build/package/Dockerfile.build .
+	@docker build --network host -t "${BUILDER}" -f build/package/Dockerfile.build .
 
 binary-image: builder-image
-	@docker run --rm "${BUILDER}" | docker build -t "${REPOSITORY}" -f Dockerfile.run -
+	@docker run --network host --rm "${BUILDER}" | docker build --network host -t "${REPOSITORY}" -f Dockerfile.run -
 
 test:
 	"$(GOCMD)" test -v ./...
