@@ -7,8 +7,8 @@ metadata:
     app: chowkidar
     group: com.stakater.platform
     provider: stakater
-    version: 0.0.24
-    chart: "chowkidar-0.0.24"
+    version: 0.0.25
+    chart: "chowkidar-0.0.25"
     release: "RELEASE-NAME"
     heritage: "Tiller"
   name: chowkidar
