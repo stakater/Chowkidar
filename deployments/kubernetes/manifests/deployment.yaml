@@ -4,13 +4,13 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   annotations:
-    configmap.fabric8.io/update-on-change: chowkidar
+    configmap.reloader.stakater.com/reload: chowkidar
   labels:
     app: chowkidar
     group: com.stakater.platform
     provider: stakater
-    version: 0.0.26
-    chart: "chowkidar-0.0.26"
+    version: 0.0.27
+    chart: "chowkidar-0.0.27"
     release: "RELEASE-NAME"
     heritage: "Tiller"
   name: chowkidar
@@ -24,8 +24,6 @@ spec:
       provider: stakater
   template:
     metadata:
-      annotations:
-        configmap.fabric8.io/update-on-change: chowkidar
       labels:
         app: chowkidar
         group: com.stakater.platform
@@ -39,7 +37,7 @@ spec:
               fieldPath: metadata.namespace
         - name: CONFIG_FILE_PATH
           value: /configs/config.yaml
-        image: "stakater/chowkidar:0.0.26"
+        image: "stakater/chowkidar:0.0.27"
         imagePullPolicy: IfNotPresent
         name: chowkidar
         volumeMounts:
