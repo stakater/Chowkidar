@@ -1,0 +1,137 @@
+---
+# Source: chowkidar/templates/deployment.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    configmap.reloader.stakater.com/reload: chowkidar
+  labels:
+    app: chowkidar
+    group: com.stakater.platform
+    provider: stakater
+    version: 0.0.30
+    chart: "chowkidar-0.0.30"
+    release: "RELEASE-NAME"
+    heritage: "Tiller"
+  name: chowkidar
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: chowkidar
+      group: com.stakater.platform
+      provider: stakater
+  template:
+    metadata:
+      labels:
+        app: chowkidar
+        group: com.stakater.platform
+        provider: stakater
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_FILE_PATH
+          value: /configs/config.yaml
+        image: "stakater/chowkidar:0.0.30"
+        imagePullPolicy: IfNotPresent
+        name: chowkidar
+        volumeMounts:
+        - mountPath: /configs
+          name: config-volume
+      serviceAccountName: chowkidar
+      volumes:
+      - configMap:
+          name: chowkidar
+        name: config-volume
+              
+---
+# Source: chowkidar/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: chowkidar
+    group: com.stakater.platform
+    provider: stakater
+    version: 0.0.30
+    chart: "chowkidar-0.0.30"
+    release: "RELEASE-NAME"
+    heritage: "Tiller"
+  name: chowkidar
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  labels: 
+    app: chowkidar
+    group: com.stakater.platform
+    provider: stakater
+    version: 0.0.30
+    chart: "chowkidar-0.0.30"
+    release: "RELEASE-NAME"
+    heritage: "Tiller"
+  name: chowkidar-role
+rules:
+  - apiGroups:
+      - ""
+    resources:      
+      - pods
+    verbs:
+      - list
+      - get
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  labels: 
+    app: chowkidar
+    group: com.stakater.platform
+    provider: stakater
+    version: 0.0.30
+    chart: "chowkidar-0.0.30"
+    release: "RELEASE-NAME"
+    heritage: "Tiller"
+  name: chowkidar-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: chowkidar-role
+subjects:
+  - kind: ServiceAccount
+    name: chowkidar
+    namespace: default
+
+---
+# Source: chowkidar/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: chowkidar
+    group: com.stakater.platform
+    provider: stakater
+    version: 0.0.30
+    chart: "chowkidar-0.0.30"
+    release: "RELEASE-NAME"
+    heritage: "Tiller"
+  name: chowkidar
+data:
+  config.yaml: |-
+    controllers:
+    - type: pods
+      watchcriterion:
+        operator: and
+        identifiers:
+        - resourceExists
+        - healthCheckExists
+      actions:
+      - name: slack
+        params:
+          channel: channel-name
+          token: your-token
