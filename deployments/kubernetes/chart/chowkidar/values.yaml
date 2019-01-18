@@ -7,10 +7,10 @@ chowkidar:
   labels:
     provider: stakater
     group: com.stakater.platform
-    version: 0.0.30
+    version: v0.0.31
   image:
     name: stakater/chowkidar
-    tag: "0.0.30"
+    tag: "v0.0.31"
     pullPolicy: IfNotPresent
   controllers:
     - type: pods
