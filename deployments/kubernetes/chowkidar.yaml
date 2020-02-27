@@ -1,4 +1,32 @@
 ---
+# Source: chowkidar/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: chowkidar
+    group: com.stakater.platform
+    provider: stakater
+    version: v0.0.33
+    chart: "chowkidar-v0.0.33"
+    release: "chowkidar"
+    heritage: "Tiller"
+  name: chowkidar
+data:
+  config.yaml: |-
+    controllers:
+    - type: pods
+      watchcriterion:
+        operator: and
+        identifiers:
+        - resourceExists
+        - healthCheckExists
+      actions:
+      - name: slack
+        params:
+          channel: channel-name
+          token: your-token
+---
 # Source: chowkidar/templates/deployment.yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -9,9 +37,9 @@ metadata:
     app: chowkidar
     group: com.stakater.platform
     provider: stakater
-    version: v0.0.32
-    chart: "chowkidar-v0.0.32"
-    release: "RELEASE-NAME"
+    version: v0.0.33
+    chart: "chowkidar-v0.0.33"
+    release: "chowkidar"
     heritage: "Tiller"
   name: chowkidar
 spec:
@@ -37,7 +65,7 @@ spec:
               fieldPath: metadata.namespace
         - name: CONFIG_FILE_PATH
           value: /configs/config.yaml
-        image: "stakater/chowkidar:v0.0.32"
+        image: "stakater/chowkidar:v0.0.33"
         imagePullPolicy: IfNotPresent
         name: chowkidar
         volumeMounts:
@@ -58,9 +86,9 @@ metadata:
     app: chowkidar
     group: com.stakater.platform
     provider: stakater
-    version: v0.0.32
-    chart: "chowkidar-v0.0.32"
-    release: "RELEASE-NAME"
+    version: v0.0.33
+    chart: "chowkidar-v0.0.33"
+    release: "chowkidar"
     heritage: "Tiller"
   name: chowkidar
 ---
@@ -71,9 +99,9 @@ metadata:
     app: chowkidar
     group: com.stakater.platform
     provider: stakater
-    version: v0.0.32
-    chart: "chowkidar-v0.0.32"
-    release: "RELEASE-NAME"
+    version: v0.0.33
+    chart: "chowkidar-v0.0.33"
+    release: "chowkidar"
     heritage: "Tiller"
   name: chowkidar-role
 rules:
@@ -93,9 +121,9 @@ metadata:
     app: chowkidar
     group: com.stakater.platform
     provider: stakater
-    version: v0.0.32
-    chart: "chowkidar-v0.0.32"
-    release: "RELEASE-NAME"
+    version: v0.0.33
+    chart: "chowkidar-v0.0.33"
+    release: "chowkidar"
     heritage: "Tiller"
   name: chowkidar-role-binding
 roleRef:
@@ -107,31 +135,3 @@ subjects:
     name: chowkidar
     namespace: default
 
----
-# Source: chowkidar/templates/configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  labels:
-    app: chowkidar
-    group: com.stakater.platform
-    provider: stakater
-    version: v0.0.32
-    chart: "chowkidar-v0.0.32"
-    release: "RELEASE-NAME"
-    heritage: "Tiller"
-  name: chowkidar
-data:
-  config.yaml: |-
-    controllers:
-    - type: pods
-      watchcriterion:
-        operator: and
-        identifiers:
-        - resourceExists
-        - healthCheckExists
-      actions:
-      - name: slack
-        params:
-          channel: channel-name
-          token: your-token
