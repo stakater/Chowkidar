@@ -3,7 +3,7 @@
 apiVersion: v1
 name: chowkidar
 description: Chowkidar chart that runs on kubernetes
-version: v0.0.34
+version: v0.0.35
 keywords:
   - Chowkidar
   - kubernetes
